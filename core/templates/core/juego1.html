@@ -2,116 +2,33 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Juego 1 - Finance Kids</title>
-
-    <style>
-        /* ======== ESTILOS GLOBALES ======== */
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #d6f0ff, #e8faff);
-            margin: 0;
-            padding: 0;
-            text-align: center;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-
-        h1 {
-            color: #219ebc;
-            font-size: 2rem;
-            margin-bottom: 25px;
-            animation: fadeIn 0.8s ease-in-out;
-        }
-
-        /* ======== CONTENEDOR DE OPCIONES ======== */
-        .opciones {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 25px;
-            margin-top: 20px;
-            max-width: 700px;
-        }
-
-        .item {
-            background: #ffffff;
-            border-radius: 20px;
-            width: 160px;
-            padding: 25px 10px;
-            cursor: pointer;
-            transition: 0.3s ease;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            font-size: 1.1rem;
-            color: #0a3d62;
-        }
-
-        .item:hover {
-            transform: scale(1.08);
-            background-color: #f0fbff;
-        }
-
-        /* Colores al responder */
-        .correcto {
-            background: #b8f5c0 !important;
-            color: #14532d;
-            box-shadow: 0 4px 10px rgba(34, 197, 94, 0.4);
-        }
-
-        .incorrecto {
-            background: #f5b8b8 !important;
-            color: #7f1d1d;
-            box-shadow: 0 4px 10px rgba(239, 68, 68, 0.4);
-        }
-
-        /* ======== BOTÓN CONTINUAR ======== */
-        button {
-            background: #6fd3ff;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 12px;
-            margin-top: 35px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 10px rgba(111, 211, 255, 0.4);
-            display: none;
-        }
-
-        button:hover {
-            background: #50b9ff;
-            transform: translateY(-2px);
-        }
-
-        /* ======== ANIMACIÓN ======== */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 
-<body>
-    <h1>💰 Elige las cosas que cuestan dinero</h1>
+<body class="fk-page fk-center-layout">
+    <div class="fk-wrap">
+        <h1 class="fk-game-title">💰 Elige las cosas que cuestan dinero</h1>
 
-    <div class="opciones">
-        <div class="item" data-correcto="true">🎮 Videojuego</div>
-        <div class="item" data-correcto="true">🍕 Pizza</div>
-        <div class="item" data-correcto="false">🌈 Arcoíris</div>
-        <div class="item" data-correcto="false">👨‍👩‍👧 Amor</div>
-        <div class="item" data-correcto="true">🏠 Casa</div>
+        <div class="fk-items">
+            <div class="fk-item" data-correcto="true">🎮 Videojuego</div>
+            <div class="fk-item" data-correcto="true">🍕 Pizza</div>
+            <div class="fk-item" data-correcto="false">🌈 Arcoíris</div>
+            <div class="fk-item" data-correcto="false">👨‍👩‍👧 Amor</div>
+            <div class="fk-item" data-correcto="true">🏠 Casa</div>
+        </div>
+
+        <div class="fk-actions-row">
+            <button id="continuar" class="fk-btn" style="display:none;" onclick="window.location.href='/preguntas1/'">
+                Continuar ➡️
+            </button>
+        </div>
     </div>
 
-    <button id="continuar" onclick="window.location.href='/preguntas1/'">
-        Continuar ➡️
-    </button>
-
     <script>
-        const items = document.querySelectorAll('.item');
+        const items = document.querySelectorAll('.fk-item');
         let aciertos = 0;
 
         items.forEach(item => {

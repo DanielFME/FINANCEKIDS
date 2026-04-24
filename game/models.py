@@ -41,6 +41,12 @@ class UserProfile(models.Model):
 
     pais = models.CharField(max_length=50, null=True, blank=True)
 
+    acepto_terminos = models.BooleanField(default=False)
+    acepto_terminos_en = models.DateTimeField(null=True, blank=True)
+    consentimiento_tutor = models.BooleanField(default=False)
+    consentimiento_tutor_en = models.DateTimeField(null=True, blank=True)
+    registro_ip = models.GenericIPAddressField(null=True, blank=True)
+
     ultimo_tema_desbloqueado = models.PositiveSmallIntegerField(default=1)
 
     fecha_creacion = models.DateTimeField(auto_now_add=True)
