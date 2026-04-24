@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods, require_POST
+from core.forms import RegistroForm
 from game.models import UserProfile
 
 
@@ -38,21 +39,13 @@ def index(request):
 @require_http_methods(['GET', 'POST'])
 def registro(request):
     if request.method == "POST":
-        username = request.POST.get('username')
-        password = request.POST.get('password1')
+        form = RegistroForm(request.POST)
+        if form.is_valid():
+            form.save(request=request)
+            return redirect('login')
+        return render(request, 'core/registro.html', {'form': form})
 
-
-        if not username or not password:
-            return render(request, 'core/registro.html', {'error': 'Completa todos los campos'})
-
-        if User.objects.filter(username=username).exists():
-            return render(request, 'core/registro.html', {'error': 'El usuario ya existe'})
-
-        user = User.objects.create_user(username=username, password=password)
-        _get_user_profile(user)
-        return redirect('login')
-
-    return render(request, 'core/registro.html')
+    return render(request, 'core/registro.html', {'form': RegistroForm()})
 
 
 def logout_view(request):

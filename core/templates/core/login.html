@@ -5,210 +5,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar Sesión - Finance Kids</title>
-
-    <style>
-        /* ====== ESTILOS GLOBALES ====== */
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: "Poppins", sans-serif;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #71d4f6, #66bef1);
-        }
-
-        .container {
-            display: flex;
-            width: 90%;
-            max-width: 1100px;
-            height: 90vh;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            background-color: white;
-        }
-
-        /* ====== SECCIÓN IZQUIERDA ====== */
-        .left-section {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 40px;
-            background: #f9fdff;
-            position: relative;
-        }
-
-        .logo {
-            position: absolute;
-            top: 25px;
-            left: 35px;
-        }
-
-        .logo img {
-            width: 120px;
-            height: auto;
-        }
-
-        /* ====== FORMULARIO ====== */
-        form {
-            background: #ffffff;
-            padding: 40px 30px;
-            border-radius: 20px;
-            width: 100%;
-            max-width: 360px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
-            text-align: center;
-            transition: transform 0.3s ease;
-        }
-
-        form:hover {
-            transform: translateY(-3px);
-        }
-
-        h2 {
-            color: #219ebc;
-            margin-bottom: 25px;
-            font-weight: 600;
-        }
-
-        input {
-            width: 100%;
-            padding: 12px 15px;
-            margin-bottom: 15px;
-            border: 1.5px solid #bcdff9;
-            border-radius: 10px;
-            font-size: 1rem;
-            background-color: #f3fbff;
-            transition: 0.3s;
-        }
-
-        input:focus {
-            border-color: #219ebc;
-            box-shadow: 0 0 6px rgba(33, 158, 188, 0.4);
-            outline: none;
-        }
-
-        button {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s ease;
-        }
-
-        button[type="submit"] {
-            background-color: #219ebc;
-            color: white;
-            box-shadow: 0 4px 0 #17637f;
-        }
-
-        button[type="submit"]:hover {
-            background-color: #19799c;
-            transform: translateY(-2px);
-        }
-
-        .register-btn {
-            background-color: #ffffff;
-            border: 2px solid #219ebc;
-            color: #219ebc;
-            margin-top: 10px;
-        }
-
-        .register-btn:hover {
-            background-color: #219ebc;
-            color: white;
-            transform: translateY(-2px);
-        }
-
-        .error {
-            color: #c0392b;
-            font-size: 0.9rem;
-            margin-bottom: 10px;
-        }
-
-        /* ====== SECCIÓN DERECHA ====== */
-        .right-section {
-            flex: 1;
-            background: linear-gradient(180deg, #dff5ff, #c0eaff);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .gif-container img {
-            width: 80%;
-            max-width: 400px;
-            height: auto;
-        }
-
-        /* ====== RESPONSIVE ====== */
-        @media (max-width: 950px) {
-            .container {
-                flex-direction: column;
-                height: auto;
-            }
-
-            .right-section {
-                display: none;
-            }
-
-            .left-section {
-                width: 100%;
-                box-shadow: none;
-                padding: 20px;
-            }
-
-            form {
-                width: 90%;
-                max-width: 400px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 
-<body>
-    <div class="container">
-        <!-- ======= COLUMNA IZQUIERDA ======= -->
-        <div class="left-section">
-            <div class="logo">
+<body class="fk-page fk-center-layout">
+    <div class="fk-auth-shell">
+        <div class="fk-auth-main">
+            <div class="fk-auth-brand">
                 <img src="{% static 'img/logo wiliam.jpg' %}" alt="Finance Kids Logo">
+                <span>Finance Kids</span>
             </div>
 
-            <!-- 🔹 FORMULARIO -->
-            <form method="POST">
+            <form method="POST" class="fk-auth-form">
                 {% csrf_token %}
-                <h2>Iniciar Sesión</h2>
+                <h2 class="fk-title">Iniciar Sesión</h2>
+                <p class="fk-subtitle">Bienvenido de vuelta. Sigue aprendiendo finanzas.</p>
 
                 {% if error %}
-                    <div class="error">{{ error }}</div>
+                    <div class="fk-error">{{ error }}</div>
                 {% endif %}
 
-                <input type="text" name="username" placeholder="Nombre de usuario" required>
-                <input type="password" name="password" placeholder="Contraseña" required>
+                <input class="fk-field" type="text" name="username" placeholder="Nombre de usuario" required>
+                <input class="fk-field" type="password" name="password" placeholder="Contraseña" required>
 
-                <button type="submit">Entrar</button>
-
-                <a href="{% url 'registro' %}" style="text-decoration: none; width: 100%;">
-                    <button type="button" class="register-btn">Regístrate</button>
-                </a>
+                <div class="fk-auth-actions">
+                    <button type="submit" class="fk-btn">Entrar</button>
+                    <a href="{% url 'registro' %}" class="fk-btn-secondary">Regístrate</a>
+                </div>
             </form>
         </div>
 
-        <!-- ======= COLUMNA DERECHA (Mascota) ======= -->
-<div class="right-section">
-    <div class="gif-container">
-        <img src="https://media.tenor.com/jRfdWEI5BgoAAAAi/upset-pudgypenguins.gif" 
-        alt="Finance Kids Mascota"
-        style="width: 350px; height: auto;">
+        <div class="fk-auth-visual">
+            <img src="https://media.tenor.com/jRfdWEI5BgoAAAAi/upset-pudgypenguins.gif" alt="Finance Kids Mascota">
+        </div>
     </div>
-</div>
-
 </body>
 </html>

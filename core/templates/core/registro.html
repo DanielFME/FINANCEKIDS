@@ -5,202 +5,187 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro - Finance Kids</title>
-
-    <style>
-        /* ========== 
-           ESTILOS GLOBALES
-        ========== */
-        body {
-            font-family: "Poppins", sans-serif;
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            display: flex;
-            background-color: #e6f7ff; /* Fondo azul claro pastel */
-        }
-
-        /* ========== 
-           CONTENEDOR PRINCIPAL (divide en 2 columnas)
-        ========== */
-        .container {
-            display: flex;
-            width: 100%;
-            height: 100%;
-        }
-
-        /* ========== 
-           COLUMNA IZQUIERDA (GIF)
-        ========== */
-        .left-section {
-            flex: 1;
-            background-color: #cceeff; /* Azul pastel suave */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-
-        /* Aquí se mostrará tu GIF */
-        .gif-container img {
-            width: 80%;
-            max-width: 400px;
-            height: auto;
-            border-radius: 10px;
-        }
-
-        /* ========== 
-           COLUMNA DERECHA (Formulario + Logo)
-        ========== */
-        .right-section {
-            flex: 1;
-            background-color: #ffffff; /* Fondo blanco limpio */
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.05);
-            position: relative;
-        }
-
-        /* LOGO (arriba a la derecha) */
-        .logo {
-            position: absolute;
-            top: 30px;
-            right: 50px;
-            color: #2c91d3;
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-
-        /* FORMULARIO */
-        form {
-            background: #f7fbff;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-            width: 340px;
-            text-align: center;
-        }
-
-        h2 {
-            color: #2c91d3;
-            margin-bottom: 20px;
-        }
-
-        input {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            font-size: 1rem;
-        }
-
-        button {
-            background: #2c91d3;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            width: 100%;
-            border-radius: 8px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        button:hover {
-            background: #1a6fa0;
-        }
-
-        /* Botón para volver al login */
-        .login-btn {
-            margin-top: 15px;
-            background-color: white;
-            border: 2px solid #2c91d3;
-            color: #2c91d3;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .login-btn:hover {
-            background-color: #2c91d3;
-            color: white;
-        }
-
-        /* MENSAJES DE ERROR */
-        .error {
-            color: #c0392b;
-            font-size: 0.9rem;
-            margin-bottom: 10px;
-        }
-
-        /* RESPONSIVE */
-        @media (max-width: 900px) {
-            .container {
-                flex-direction: column-reverse;
-            }
-
-            .left-section, .right-section {
-                flex: none;
-                width: 100%;
-                box-shadow: none;
-            }
-
-            .logo {
-                position: static;
-                margin-bottom: 20px;
-            }
-
-            form {
-                width: 80%;
-                max-width: 350px;
-            }
-
-            .gif-container {
-                display: none; /* Oculta el GIF en móviles */
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 
-<body>
+<body class="registro-page">
     <div class="container">
-        <!-- ======= COLUMNA IZQUIERDA (GIF) ======= -->
         <div class="left-section">
             <div class="gif-container">
-        <img src="https://media.tenor.com/B7q8IRqkYFMAAAAi/pengu-pudgy.gif" 
-        alt="Finance Kids Mascota"
-        style="width: 350px; height: auto;">
-    </div>
-</div>
+                <img src="https://media.tenor.com/B7q8IRqkYFMAAAAi/pengu-pudgy.gif" alt="Finance Kids Mascota">
+            </div>
+        </div>
 
-
-        <!-- ======= COLUMNA DERECHA (Formulario) ======= -->
         <div class="right-section">
-            <!-- 🔹 Logo (arriba a la derecha) -->
-            <!-- Ejemplo real: <img src="{% static 'img/logo.png' %}" alt="Logo" class="logo-img"> -->
-            <div class="logo">Tu Logo Aquí</div>
+            <div class="logo">Finance Kids<small>Aprende jugando</small></div>
 
-            <!-- 🔹 Formulario de registro -->
-            <form method="POST">
+            <form method="POST" class="registro-form">
                 {% csrf_token %}
                 <h2>Crear Cuenta</h2>
+                <p class="subtitle">Completa tus datos para comenzar la aventura.</p>
 
-                {% if error %}
-                    <div class="error">{{ error }}</div>
+                {% if form.non_field_errors %}
+                    <div class="error">{{ form.non_field_errors|striptags }}</div>
                 {% endif %}
 
-                <input type="text" name="username" placeholder="Nombre de usuario" required>
-                <input type="password" name="password1" placeholder="Contraseña" required>
+                <div class="form-section">
+                    <h3 class="section-title">Cuenta</h3>
 
-                <button type="submit">Registrarse</button>
+                    <div class="field-block">
+                        <label class="field-label" for="id_username">Nombre de usuario</label>
+                        {% if form.username.errors %}
+                            <div class="error">{{ form.username.errors|striptags }}</div>
+                        {% endif %}
+                        <input id="id_username" class="field {% if form.username.errors %}field-error{% endif %}" type="text" name="username" placeholder="Nombre de usuario" value="{{ form.username.value|default_if_none:'' }}" required>
+                    </div>
 
-                <!-- 🔹 Botón para volver al login -->
-                <a href="{% url 'login' %}">
-                    <button type="button" class="login-btn">Volver al inicio de sesión</button>
-                </a>
+                    <div class="field-block">
+                        <label class="field-label" for="id_password1">Contraseña</label>
+                        {% if form.password1.errors %}
+                            <div class="error">{{ form.password1.errors|striptags }}</div>
+                        {% endif %}
+                        <input id="id_password1" class="field {% if form.password1.errors %}field-error{% endif %}" type="password" name="password1" placeholder="Contraseña" required>
+                        <div class="hint">Usa 8+ caracteres, letras y números para mayor seguridad.</div>
+                        <div class="password-strength" aria-live="polite">
+                            <div class="strength-meter">
+                                <div id="strengthFill" class="strength-fill"></div>
+                            </div>
+                            <div id="strengthText" class="strength-text">Seguridad: pendiente</div>
+                        </div>
+                    </div>
+
+                    <div class="field-block">
+                        <label class="field-label" for="id_password2">Confirmar contraseña</label>
+                        {% if form.password2.errors %}
+                            <div class="error">{{ form.password2.errors|striptags }}</div>
+                        {% endif %}
+                        <input id="id_password2" class="field {% if form.password2.errors %}field-error{% endif %}" type="password" name="password2" placeholder="Confirmar contraseña" required>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3 class="section-title">Datos personales</h3>
+
+                    <div class="field-block">
+                        <label class="field-label" for="id_fecha_nacimiento">Fecha de nacimiento</label>
+                        {% if form.fecha_nacimiento.errors %}
+                            <div class="error">{{ form.fecha_nacimiento.errors|striptags }}</div>
+                        {% endif %}
+                        <input id="id_fecha_nacimiento" class="field {% if form.fecha_nacimiento.errors %}field-error{% endif %}" type="date" name="fecha_nacimiento" value="{{ form.fecha_nacimiento.value|default_if_none:'' }}">
+                    </div>
+
+                    <div class="field-block">
+                        <label class="field-label" for="id_genero">Género</label>
+                        {% if form.genero.errors %}
+                            <div class="error">{{ form.genero.errors|striptags }}</div>
+                        {% endif %}
+                        <select id="id_genero" class="field-select {% if form.genero.errors %}field-error{% endif %}" name="genero">
+                            <option value="" {% if not form.genero.value %}selected{% endif %}>Género (opcional)</option>
+                            <option value="M" {% if form.genero.value == 'M' %}selected{% endif %}>Masculino</option>
+                            <option value="F" {% if form.genero.value == 'F' %}selected{% endif %}>Femenino</option>
+                        </select>
+                    </div>
+
+                    <div class="field-block">
+                        <label class="field-label" for="id_pais">País</label>
+                        {% if form.pais.errors %}
+                            <div class="error">{{ form.pais.errors|striptags }}</div>
+                        {% endif %}
+                        <input id="id_pais" class="field {% if form.pais.errors %}field-error{% endif %}" type="text" name="pais" placeholder="País (opcional)" value="{{ form.pais.value|default_if_none:'' }}">
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3 class="section-title">Datos del tutor</h3>
+
+                    <div class="field-block">
+                        <label class="field-label" for="id_nombre_tutor">Nombre del tutor</label>
+                        {% if form.nombre_tutor.errors %}
+                            <div class="error">{{ form.nombre_tutor.errors|striptags }}</div>
+                        {% endif %}
+                        <input id="id_nombre_tutor" class="field {% if form.nombre_tutor.errors %}field-error{% endif %}" type="text" name="nombre_tutor" placeholder="Nombre del tutor" value="{{ form.nombre_tutor.value|default_if_none:'' }}" required>
+                        <div class="hint required">Campo obligatorio.</div>
+                    </div>
+
+                    <div class="field-block">
+                        <label class="field-label" for="id_email_tutor">Email del tutor</label>
+                        {% if form.email_tutor.errors %}
+                            <div class="error">{{ form.email_tutor.errors|striptags }}</div>
+                        {% endif %}
+                        <input id="id_email_tutor" class="field {% if form.email_tutor.errors %}field-error{% endif %}" type="email" name="email_tutor" placeholder="Email del tutor" value="{{ form.email_tutor.value|default_if_none:'' }}" required>
+                        <div class="hint required">Campo obligatorio.</div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3 class="section-title">Consentimientos</h3>
+
+                    {% if form.acepto_terminos.errors %}
+                        <div class="error">{{ form.acepto_terminos.errors|striptags }}</div>
+                    {% endif %}
+                    <label class="check-row">
+                        <input type="checkbox" name="acepto_terminos" {% if form.acepto_terminos.value %}checked{% endif %}>
+                        <span>Acepto los términos y condiciones de uso.</span>
+                    </label>
+
+                    {% if form.consentimiento_tutor.errors %}
+                        <div class="error">{{ form.consentimiento_tutor.errors|striptags }}</div>
+                    {% endif %}
+                    <label class="check-row">
+                        <input type="checkbox" name="consentimiento_tutor" {% if form.consentimiento_tutor.value %}checked{% endif %}>
+                        <span>Confirmo que cuento con el consentimiento de mi tutor para crear esta cuenta.</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Registrarse</button>
+                <a href="{% url 'login' %}" class="btn-secondary">Volver al inicio de sesión</a>
             </form>
         </div>
     </div>
+
+    <script>
+        (function () {
+            const passwordInput = document.getElementById("id_password1");
+            const strengthFill = document.getElementById("strengthFill");
+            const strengthText = document.getElementById("strengthText");
+
+            if (!passwordInput || !strengthFill || !strengthText) {
+                return;
+            }
+
+            const levels = [
+                { label: "Seguridad: muy baja", width: "10%", color: "#b8c5d1" },
+                { label: "Seguridad: débil", width: "30%", color: "#de6f5e" },
+                { label: "Seguridad: media", width: "55%", color: "#e1b94b" },
+                { label: "Seguridad: buena", width: "78%", color: "#4ba3d9" },
+                { label: "Seguridad: fuerte", width: "100%", color: "#2f9a58" }
+            ];
+
+            function calculateStrength(value) {
+                if (!value) {
+                    return levels[0];
+                }
+
+                let score = 0;
+                if (value.length >= 8) score += 1;
+                if (/[a-z]/.test(value) && /[A-Z]/.test(value)) score += 1;
+                if (/\d/.test(value)) score += 1;
+                if (/[^A-Za-z0-9]/.test(value)) score += 1;
+                if (value.length >= 12) score += 1;
+
+                return levels[Math.min(score, levels.length - 1)];
+            }
+
+            function renderStrength() {
+                const level = calculateStrength(passwordInput.value);
+                strengthFill.style.width = level.width;
+                strengthFill.style.backgroundColor = level.color;
+                strengthText.textContent = level.label;
+            }
+
+            passwordInput.addEventListener("input", renderStrength);
+            renderStrength();
+        })();
+    </script>
 </body>
 </html>
