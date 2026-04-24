@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Tema 2: Presupuesto - Finance Kids</title>
+
+    <style>
+        /* ======== ESTILOS GLOBALES ======== */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #d6f0ff, #e8faff);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* ======== CONTENEDOR PRINCIPAL ======== */
+        .contenedor {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 40px 30px;
+            max-width: 700px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        h1 {
+            color: #219ebc;
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        p {
+            color: #333;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        /* ======== IMAGEN ILUSTRATIVA ======== */
+        .contenedor img {
+            width: 180px;
+            margin: 20px 0;
+            transition: transform 0.3s ease;
+        }
+
+        .contenedor img:hover {
+            transform: scale(1.1);
+        }
+
+        /* ======== BOTÓN ======== */
+        .boton {
+            display: inline-block;
+            background-color: #6fd3ff;
+            color: white;
+            text-decoration: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(111, 211, 255, 0.4);
+        }
+
+        .boton:hover {
+            background-color: #50b9ff;
+            transform: translateY(-2px);
+        }
+
+        /* ======== ANIMACIÓN ======== */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="contenedor">
+        <h1>💰 Tema 2: Presupuesto</h1>
+
+        <p>
+            Un <b>presupuesto</b> es una herramienta que te ayuda a saber cuánto dinero tienes, 
+            cuánto gastas y cuánto puedes ahorrar.  
+            Aprender a hacer un presupuesto te permite organizar mejor tu dinero 
+            y cumplir tus metas sin gastar más de lo necesario.
+        </p>
+
+        <img src="https://media.tenor.com/5cqu6Luv51sAAAAi/buy-burn.gif" alt="Presupuesto">
+
+        <br><br>
+        <a href="{% url 'juego2' %}" class="boton">🎮 Ir al juego del tema 2</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>¿Qué es el dinero? - Finance Kids</title>
+
+    <style>
+        /* ======== ESTILOS GLOBALES ======== */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #d6f0ff, #e8faff);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* ======== CONTENEDOR PRINCIPAL ======== */
+        .contenedor {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 40px 30px;
+            max-width: 650px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        h1 {
+            color: #219ebc;
+            margin-bottom: 20px;
+        }
+
+        p {
+            color: #333;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        /* ======== IMAGEN ======== */
+        .contenedor img {
+            width: 150px;
+            margin: 20px 0;
+            transition: transform 0.3s ease;
+        }
+
+        .contenedor img:hover {
+            transform: scale(1.1);
+        }
+
+        /* ======== BOTÓN ======== */
+        .boton {
+            display: inline-block;
+            background-color: #6fd3ff;
+            color: white;
+            text-decoration: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(111, 211, 255, 0.4);
+        }
+
+        .boton:hover {
+            background-color: #50b9ff;
+            transform: translateY(-2px);
+        }
+
+        /* ======== ANIMACIÓN ======== */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="contenedor">
+        <h1>¿Qué es el dinero?</h1>
+        <p>El dinero es algo que usamos para comprar cosas que necesitamos o queremos. 
+        También se puede guardar para el futuro: a eso se le llama <b>ahorrar</b>.</p>
+
+        <img src="https://media.tenor.com/HOo7NgUcI48AAAAi/there-is-no-second-best-payday.gif" alt="Dinero">
+
+        <br><br>
+        <a href="{% url 'juego1' %}" class="boton">Jugar</a>
+    </div>
+</body>
+</html>

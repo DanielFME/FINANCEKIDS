@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Preguntas - Tema 1</title>
+    <style>
+        /* ======== ESTILOS GENERALES ======== */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #d6f0ff, #e8faff);
+            text-align: center;
+            padding: 40px 20px;
+            margin: 0;
+            color: #0a3d62;
+        }
+
+        h1 {
+            color: #219ebc;
+            margin-bottom: 25px;
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        /* ======== TARJETAS DE PREGUNTAS ======== */
+        .pregunta {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 25px 30px;
+            max-width: 700px;
+            margin: 20px auto;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            animation: fadeInUp 0.6s ease-in-out;
+        }
+
+        .pregunta p {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+
+        /* ======== BOTONES DE RESPUESTA ======== */
+        button {
+            background: #6fd3ff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            margin: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 8px rgba(111, 211, 255, 0.3);
+        }
+
+        button:hover:not(:disabled) {
+            background: #50b9ff;
+            transform: scale(1.05);
+        }
+
+        button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        /* ======== BOTÓN FINAL ======== */
+        #continuar, .final-btn {
+            background: #00b4d8;
+            padding: 12px 25px;
+            border-radius: 12px;
+            margin-top: 30px;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0, 180, 216, 0.3);
+        }
+
+        #continuar:hover, .final-btn:hover {
+            background: #0096c7;
+        }
+
+        /* ======== ANIMACIONES ======== */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ======== SECCIÓN FINAL ======== */
+        .completar {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Preguntas rápidas 🧩</h1>
+
+    <div class="pregunta">
+        <p><b>1.</b> ¿Para qué sirve el dinero?</p>
+        <button onclick="responder(this, true)">Comprar cosas</button>
+        <button onclick="responder(this, false)">Hacer magia</button>
+    </div>
+
+    <div class="pregunta">
+        <p><b>2.</b> ¿Qué significa ahorrar?</p>
+        <button onclick="responder(this, true)">Guardar dinero para el futuro</button>
+        <button onclick="responder(this, false)">Gastar todo ya</button>
+    </div>
+
+    <div class="pregunta">
+        <p><b>3.</b> ¿Cuál de estos no se compra con dinero?</p>
+        <button onclick="responder(this, false)">Un juguete</button>
+        <button onclick="responder(this, true)">El amor</button>
+    </div>
+
+    <button id="continuar" style="display:none;" onclick="window.location.href='/aprendizaje/2/'">
+        🎉 Siguiente tema
+    </button>
+
+    <div class="completar">
+        <form method="post" action="{% url 'completar_tema' tema=1 %}">
+            {% csrf_token %}
+            <button type="submit" class="final-btn">✅ Completar Tema 1</button>
+        </form>
+    </div>
+
+    <script>
+        let correctas = 0;
+
+        function responder(btn, esCorrecta) {
+            if (esCorrecta) {
+                btn.style.background = '#b8f5c0';
+                correctas++;
+            } else {
+                btn.style.background = '#f5b8b8';
+            }
+
+            btn.parentElement.querySelectorAll('button').forEach(b => b.disabled = true);
+
+            if (correctas >= 3) {
+                document.getElementById('continuar').style.display = 'inline-block';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Finance Kids - Temas</title>
+    <style>
+        /* 🎨 ESTILO GENERAL */
+        body {
+            font-family: "Poppins", sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #d6f3ff, #a8e0ff); /* Azul pastel suave */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        h1 {
+            color: #219ebc;
+            margin-top: 60px;
+            font-size: 2.2rem;
+            text-align: center;
+        }
+
+        p {
+            color: #023047;
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+        }
+
+        /* 📘 CONTENEDOR DE TEMAS */
+        .temas {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 25px;
+            width: 90%;
+            max-width: 800px;
+        }
+
+        /* 📗 TARJETAS DE TEMA */
+        .tema {
+            background: #ffffff;
+            border-radius: 18px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 25px 20px;
+            width: 260px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .tema:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .tema a {
+            text-decoration: none;
+            color: #219ebc;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: block;
+        }
+
+        /* 🔒 TEMA BLOQUEADO */
+        .bloqueado {
+            opacity: 0.6;
+            pointer-events: none;
+            background: #f0f8ff;
+            box-shadow: none;
+        }
+
+        .bloqueado span {
+            color: #8d99ae;
+            font-weight: 500;
+        }
+
+        /* 🚪 BOTÓN DE CERRAR SESIÓN */
+        a.logout {
+            display: inline-block;
+            margin-top: 50px;
+            padding: 12px 25px;
+            background: #219ebc;
+            color: white;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background 0.3s ease;
+        }
+
+        a.logout:hover {
+            background: #1a7ea0;
+        }
+
+        /* 📱 RESPONSIVE */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+                margin-top: 40px;
+            }
+
+            .tema {
+                width: 85%;
+            }
+
+            a.logout {
+                margin-top: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    {% if user.is_authenticated %}
+        <h1>¡Bienvenido, {{ user.username }}! 👋</h1>
+        <p>Selecciona el tema que deseas explorar:</p>
+
+        <div class="temas">
+            <!-- Tema 1 -->
+            <div class="tema">
+                <a href="{% url 'aprendizaje' tema=1 %}">🧩 Tema 1: Ahorro y Gasto</a>
+            </div>
+
+            <!-- Tema 2 -->
+            {% if progreso_actual >= 2 %}
+                <div class="tema">
+                    <a href="{% url 'aprendizaje' tema=2 %}">💰 Tema 2: Presupuesto</a>
+                </div>
+            {% else %}
+                <div class="tema bloqueado">
+                    <span>🔒 Tema 2: Presupuesto (bloqueado)</span>
+                </div>
+            {% endif %}
+        </div>
+
+        <a class="logout" href="{% url 'logout' %}">Cerrar sesión</a>
+
+    {% else %}
+        <h2>Debes iniciar sesión para acceder al contenido</h2>
+        <a href="{% url 'login' %}" class="logout">Iniciar Sesión</a>
+    {% endif %}
+</body>
+</html>
