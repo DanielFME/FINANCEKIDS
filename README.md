@@ -5,7 +5,7 @@ Aplicacion web educativa construida con Django para aprendizaje financiero infan
 ## Stack
 - Python 3.11+
 - Django 5
-- MySQL o SQLite (segun entorno)
+- MySQL
 - GitHub Actions para CI
 
 ## Estructura base
@@ -17,7 +17,7 @@ Aplicacion web educativa construida con Django para aprendizaje financiero infan
 ## Requisitos
 - Python instalado
 - Git instalado
-- MySQL opcional para entorno local compartido
+- MySQL para entorno local y CI
 
 ## Inicio rapido (local)
 1. Clonar repositorio.
@@ -42,10 +42,6 @@ Admin: `http://127.0.0.1:8000/admin/`
 ## Configuracion de entorno
 Usa `.env.example` como plantilla.
 
-Opciones recomendadas:
-- Desarrollo individual: SQLite
-- Desarrollo en equipo y pruebas integradas: MySQL
-
 ## Trabajo en equipo
 Consulta `CONTRIBUTING.md` para flujo de ramas y checklist de PR.
 
@@ -67,9 +63,6 @@ El pipeline ejecuta:
 ## Base de datos y sincronizacion
 Si trabajas con MySQL y esquema unificado:
 - `python manage.py unify_mysql_schema`
-
-Si migras datos desde SQLite hacia tablas Django en MySQL:
-- `python manage.py shell -c "exec(open('scripts/sync_sqlite_to_mysql.py', encoding='utf-8').read())"`
 
 ## Buenas practicas
 - No subir secretos (`.env` ya esta ignorado).

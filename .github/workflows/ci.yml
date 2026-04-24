@@ -9,6 +9,19 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_DATABASE: financekids_ci
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
 
     steps:
       - name: Checkout
@@ -29,10 +42,20 @@ jobs:
           cat > .env << 'EOF'
           DEBUG=True
           SECRET_KEY=ci-secret-key
-          DB_ENGINE=django.db.backends.sqlite3
-          SQLITE_NAME=db.sqlite3
+          DB_NAME=financekids_ci
+          DB_USER=root
+          DB_PASSWORD=root
+          DB_HOST=127.0.0.1
+          DB_PORT=3306
           ALLOWED_HOSTS=localhost,127.0.0.1
           EOF
+
+      - name: Wait for MySQL
+        run: |
+          for i in {1..30}; do
+            mysqladmin ping -h 127.0.0.1 -uroot -proot && break
+            sleep 2
+          done
 
       - name: Run migrations
         run: python manage.py migrate --noinput
