@@ -26,7 +26,7 @@ if not SECRET_KEY:
         raise ValueError('SECRET_KEY no configurada. Define SECRET_KEY en variables de entorno.')
 
 # Hosts permitidos separados por coma: ejemplo "miapp.com,.onrender.com"
-allowed_hosts_env = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1')
+allowed_hosts_env = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,172.17.2.0')
 ALLOWED_HOSTS = [host.strip() for host in allowed_hosts_env.split(',') if host.strip()]
 
 csrf_trusted_origins_env = os.getenv('CSRF_TRUSTED_ORIGINS', '')
