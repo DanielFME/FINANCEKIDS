@@ -26,12 +26,8 @@ if not SECRET_KEY:
         raise ValueError('SECRET_KEY no configurada. Define SECRET_KEY en variables de entorno.')
 
 # Hosts permitidos separados por coma: ejemplo "miapp.com,.onrender.com"
-allowed_hosts_env = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,172.17.2.0,.railway.app')
+allowed_hosts_env = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,172.17.2.0')
 ALLOWED_HOSTS = [host.strip() for host in allowed_hosts_env.split(',') if host.strip()]
-
-# En Railway, permitir siempre el dominio generado en despliegues de producción.
-if not DEBUG and '.railway.app' not in ALLOWED_HOSTS:
-    ALLOWED_HOSTS.append('.railway.app')
 
 csrf_trusted_origins_env = os.getenv('CSRF_TRUSTED_ORIGINS', '')
 CSRF_TRUSTED_ORIGINS = [
@@ -89,42 +85,16 @@ WSGI_APPLICATION = 'financekids.wsgi.application'
 # ------------------------
 # BASE DE DATOS
 # ------------------------
-db_engine = (os.getenv('DB_ENGINE', '') or '').strip().lower()
-mysql_env_present = any([
-    os.getenv('DB_HOST'),
-    os.getenv('MYSQLHOST'),
-    os.getenv('MYSQL_HOST'),
-    os.getenv('MYSQLDATABASE'),
-    os.getenv('MYSQL_DATABASE'),
-])
-
-use_mysql = db_engine == 'mysql' or (db_engine == '' and mysql_env_present)
-
-if use_mysql:
-    db_name = os.getenv('DB_NAME') or os.getenv('MYSQLDATABASE') or os.getenv('MYSQL_DATABASE') or 'financekids'
-    db_user = os.getenv('DB_USER') or os.getenv('MYSQLUSER') or os.getenv('MYSQL_USER') or 'root'
-    db_password = os.getenv('DB_PASSWORD') or os.getenv('MYSQLPASSWORD') or os.getenv('MYSQL_PASSWORD') or ''
-    db_host = os.getenv('DB_HOST') or os.getenv('MYSQLHOST') or os.getenv('MYSQL_HOST') or 'localhost'
-    db_port = os.getenv('DB_PORT') or os.getenv('MYSQLPORT') or os.getenv('MYSQL_PORT') or '3306'
-
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': db_name,
-            'USER': db_user,
-            'PASSWORD': db_password,
-            'HOST': db_host,
-            'PORT': db_port,
-        }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.getenv('DB_NAME', 'financekids'),
+        'USER': os.getenv('DB_USER', 'root'),
+        'PASSWORD': os.getenv('DB_PASSWORD', ''),
+        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'PORT': os.getenv('DB_PORT', '3306'),
     }
-else:
-    # Configuracion local por defecto: cero dependencias externas.
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
+}
 # ------------------------
 # VALIDACIÓN DE CONTRASEÑAS
 # ------------------------
