@@ -33,17 +33,7 @@ def login_view(request):
 @login_required
 def index(request):
     profile = _get_user_profile(request.user)
-    progreso_actual = profile.ultimo_tema_desbloqueado
-    # Compatibilidad con plantillas que esperan progreso como diccionario por usuario.
-    progreso = {request.user.username: progreso_actual}
-    return render(
-        request,
-        'core/index.html',
-        {
-            'progreso_actual': progreso_actual,
-            'progreso': progreso,
-        },
-    )
+    return render(request, 'core/index.html', {'progreso_actual': profile.ultimo_tema_desbloqueado})
 
 
 @require_http_methods(['GET', 'POST'])
