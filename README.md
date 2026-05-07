@@ -19,6 +19,20 @@ Aplicacion web educativa construida con Django para aprendizaje financiero infan
 - Git instalado
 - MySQL para entorno local y CI
 
+## Onboarding rapido para companeros (Windows)
+1. Clonar el repositorio.
+2. Abrir PowerShell en la carpeta del proyecto.
+3. Ejecutar setup automatico (crea `.venv`, instala dependencias, genera `.env`, activa SQLite y migra):
+	- `powershell -ExecutionPolicy Bypass -File .\scripts\setup_local_windows.ps1`
+4. Iniciar la app:
+	- `powershell -ExecutionPolicy Bypass -File .\scripts\start_local_windows.ps1`
+
+Tambien puedes usar doble click en:
+- `scripts\setup_local_windows.bat`
+- `scripts\start_local_windows.bat`
+
+URL local: `http://127.0.0.1:8000/`
+
 ## Inicio rapido (local)
 1. Clonar repositorio.
 2. Crear virtualenv:
@@ -38,6 +52,10 @@ Aplicacion web educativa construida con Django para aprendizaje financiero infan
 
 App: `http://127.0.0.1:8000/`
 Admin: `http://127.0.0.1:8000/admin/`
+
+### Notas para desarrollo local sencillo
+- El setup automatico deja `USE_SQLITE=True` para evitar instalar MySQL en equipos nuevos.
+- Si quieres MySQL local, cambia `USE_SQLITE=False` en `.env` y completa `DB_*`.
 
 ## Configuracion de entorno
 Usa `.env.example` como plantilla.

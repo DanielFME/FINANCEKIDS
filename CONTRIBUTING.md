@@ -7,6 +7,11 @@
 - Fix branches: `fix/<short-name>`.
 
 ## Local setup
+Fast path (Windows):
+1. `powershell -ExecutionPolicy Bypass -File .\\scripts\\setup_local_windows.ps1`
+2. `powershell -ExecutionPolicy Bypass -File .\\scripts\\start_local_windows.ps1`
+
+Manual path:
 1. Create virtual env: `python -m venv .venv`
 2. Activate env:
    - PowerShell: `.venv\\Scripts\\Activate.ps1`
