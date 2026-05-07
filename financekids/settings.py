@@ -97,11 +97,12 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': os.getenv('DB_NAME', 'financekids'),
-            'USER': os.getenv('DB_USER', 'root'),
-            'PASSWORD': os.getenv('DB_PASSWORD', ''),
-            'HOST': os.getenv('DB_HOST', 'localhost'),
-            'PORT': os.getenv('DB_PORT', '3306'),
+            # Soporta tanto DB_* (local) como MYSQL_ADDON_* (Clever Cloud)
+            'NAME': os.getenv('DB_NAME') or os.getenv('MYSQL_ADDON_DB', 'financekids'),
+            'USER': os.getenv('DB_USER') or os.getenv('MYSQL_ADDON_USER', 'root'),
+            'PASSWORD': os.getenv('DB_PASSWORD') or os.getenv('MYSQL_ADDON_PASSWORD', ''),
+            'HOST': os.getenv('DB_HOST') or os.getenv('MYSQL_ADDON_HOST', 'localhost'),
+            'PORT': os.getenv('DB_PORT') or os.getenv('MYSQL_ADDON_PORT', '3306'),
         }
     }
 # ------------------------
