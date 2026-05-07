@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+from urllib.parse import urlparse
 from dotenv import load_dotenv
 
 # Cargar variables del archivo .env (si existe)
@@ -94,15 +95,32 @@ if str_to_bool(os.getenv('USE_SQLITE'), default=False):
         }
     }
 else:
+    mysql_addon_uri = os.getenv('MYSQL_ADDON_URI', '')
+    parsed_uri = urlparse(mysql_addon_uri) if mysql_addon_uri else None
+
+    db_name = os.getenv('MYSQL_ADDON_DB') or os.getenv('DB_NAME')
+    db_user = os.getenv('MYSQL_ADDON_USER') or os.getenv('DB_USER')
+    db_password = os.getenv('MYSQL_ADDON_PASSWORD') or os.getenv('DB_PASSWORD')
+    db_host = os.getenv('MYSQL_ADDON_HOST') or os.getenv('DB_HOST')
+    db_port = os.getenv('MYSQL_ADDON_PORT') or os.getenv('DB_PORT')
+
+    # Fallback final: extraer credenciales desde MYSQL_ADDON_URI si faltan campos puntuales.
+    if parsed_uri:
+        db_name = db_name or (parsed_uri.path.lstrip('/') if parsed_uri.path else None)
+        db_user = db_user or parsed_uri.username
+        db_password = db_password or parsed_uri.password
+        db_host = db_host or parsed_uri.hostname
+        db_port = db_port or (str(parsed_uri.port) if parsed_uri.port else None)
+
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            # Soporta tanto DB_* (local) como MYSQL_ADDON_* (Clever Cloud)
-            'NAME': os.getenv('DB_NAME') or os.getenv('MYSQL_ADDON_DB', 'financekids'),
-            'USER': os.getenv('DB_USER') or os.getenv('MYSQL_ADDON_USER', 'root'),
-            'PASSWORD': os.getenv('DB_PASSWORD') or os.getenv('MYSQL_ADDON_PASSWORD', ''),
-            'HOST': os.getenv('DB_HOST') or os.getenv('MYSQL_ADDON_HOST', 'localhost'),
-            'PORT': os.getenv('DB_PORT') or os.getenv('MYSQL_ADDON_PORT', '3306'),
+            # Prioriza MYSQL_ADDON_* (Clever Cloud) y deja DB_* como alternativa local.
+            'NAME': db_name or 'financekids',
+            'USER': db_user or 'root',
+            'PASSWORD': db_password or '',
+            'HOST': db_host or 'localhost',
+            'PORT': db_port or '3306',
         }
     }
 # ------------------------
