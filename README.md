@@ -5,7 +5,9 @@ Aplicacion web educativa construida con Django para aprendizaje financiero infan
 ## Stack
 - Python 3.11+
 - Django 5
-- MySQL
+- PostgreSQL en produccion (Render)
+- SQLite en desarrollo local rapido
+- MySQL como compatibilidad/fallback
 - GitHub Actions para CI
 
 ## Estructura base
@@ -81,6 +83,54 @@ El pipeline ejecuta:
 ## Base de datos y sincronizacion
 Si trabajas con MySQL y esquema unificado:
 - `python manage.py unify_mysql_schema`
+
+## Arquitectura de base de datos (Render y local)
+
+Esta app usa una estrategia de conexion flexible definida en `financekids/settings.py`.
+No hay una sola base fija para todos los entornos: el motor se elige por variables de entorno.
+
+### Como decide Django a que base conectarse
+Orden de prioridad actual:
+
+1. `USE_SQLITE=True`
+2. `DATABASE_URL` (PostgreSQL, recomendado en Render)
+3. Variables `MYSQL_ADDON_*`
+4. Variables `DB_*` (MySQL manual)
+
+Interpretacion practica:
+- Si `USE_SQLITE=True`, se ignora todo lo demas y se usa `db.sqlite3` local.
+- Si `USE_SQLITE=False` y existe `DATABASE_URL`, se conecta a PostgreSQL.
+- Si no existe `DATABASE_URL`, intenta MySQL con `MYSQL_ADDON_*` o `DB_*`.
+
+### Donde esta alojada la base de datos en produccion
+En Render, la base de datos esta en un servicio separado de tipo PostgreSQL
+(por ejemplo, `financekids-db`).
+
+El servicio web Django (`financekids`) no almacena datos permanentes en su propio disco.
+Solo se conecta por red a PostgreSQL usando `DATABASE_URL`.
+
+Por eso, al hacer redeploy:
+- el codigo de la app cambia,
+- pero los datos de usuarios/progreso permanecen en la base PostgreSQL.
+
+### Variables recomendadas en Render
+En el servicio web:
+- `DEBUG=False`
+- `USE_SQLITE=False`
+- `DATABASE_URL=<inyectada por Render al enlazar PostgreSQL>`
+- `ALLOWED_HOSTS=.onrender.com`
+- `CSRF_TRUSTED_ORIGINS=https://tu-servicio.onrender.com`
+- `SECRET_KEY=<valor seguro>`
+
+### Detalles de conexion usados por Django
+Cuando usa `DATABASE_URL`, se aplica:
+- `conn_max_age=600`: reutiliza conexiones (menos overhead).
+- `ssl_require=not DEBUG`: en produccion fuerza SSL hacia la base.
+
+### Que base se usa en cada escenario
+- Laptop local (setup rapido): SQLite (`USE_SQLITE=True`).
+- Render produccion: PostgreSQL (`USE_SQLITE=False` + `DATABASE_URL`).
+- Entorno legado/especial: MySQL (`MYSQL_ADDON_*` o `DB_*`).
 
 ## Buenas practicas
 - No subir secretos (`.env` ya esta ignorado).
