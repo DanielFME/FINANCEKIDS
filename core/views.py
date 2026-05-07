@@ -89,7 +89,12 @@ def completar_tema(request, tema):
         return redirect('index')
 
     return redirect('aprendizaje', tema=siguiente_tema)
+        # Temas 4 en adelante aún en construcción
+        ULTIMO_TEMA_DISPONIBLE = 3
+        if siguiente_tema > ULTIMO_TEMA_DISPONIBLE:
+            return redirect('construccion')
 
+        return redirect('aprendizaje', tema=siguiente_tema)
 
 @login_required
 def juego1(request):
@@ -109,3 +114,8 @@ def juego2(request):
 @login_required
 def preguntas2(request):
     return render(request, 'core/preguntas2.html')
+
+
+    @login_required
+    def construccion(request):
+        return render(request, 'core/construccion.html')
