@@ -57,7 +57,7 @@ def registro(request):
     return render(request, 'core/registro.html', {'form': RegistroForm()})
 
 
-@require_POST
+@require_http_methods(['GET', 'POST'])
 def logout_view(request):
     logout(request)
     return redirect('login')
