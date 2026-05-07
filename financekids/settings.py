@@ -14,11 +14,23 @@ def str_to_bool(value, default=False):
         return default
     return value.strip().lower() in ('1', 'true', 'yes', 'on')
 
+
+def get_env(name, default=None):
+    value = os.getenv(name)
+    if value is None:
+        return default
+
+    value = value.strip()
+    if len(value) >= 2 and value[0] == value[-1] and value[0] in ('"', "'"):
+        value = value[1:-1].strip()
+
+    return value if value != '' else default
+
 # ------------------------
 # SEGURIDAD
 # ------------------------
-DEBUG = str_to_bool(os.getenv('DEBUG'), default=True)
-SECRET_KEY = os.getenv('SECRET_KEY')
+DEBUG = str_to_bool(get_env('DEBUG'), default=True)
+SECRET_KEY = get_env('SECRET_KEY')
 
 if not SECRET_KEY:
     if DEBUG:
@@ -27,10 +39,10 @@ if not SECRET_KEY:
         raise ValueError('SECRET_KEY no configurada. Define SECRET_KEY en variables de entorno.')
 
 # Hosts permitidos separados por coma: ejemplo "miapp.com,.onrender.com"
-allowed_hosts_env = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1')
+allowed_hosts_env = get_env('ALLOWED_HOSTS', 'localhost,127.0.0.1')
 ALLOWED_HOSTS = [host.strip() for host in allowed_hosts_env.split(',') if host.strip()]
 
-csrf_trusted_origins_env = os.getenv('CSRF_TRUSTED_ORIGINS', '')
+csrf_trusted_origins_env = get_env('CSRF_TRUSTED_ORIGINS', '')
 CSRF_TRUSTED_ORIGINS = [
     origin.strip() for origin in csrf_trusted_origins_env.split(',') if origin.strip()
 ]
@@ -87,7 +99,7 @@ WSGI_APPLICATION = 'financekids.wsgi.application'
 # BASE DE DATOS
 # ------------------------
 # Establece USE_SQLITE=True en .env para desarrollo sin MySQL
-if str_to_bool(os.getenv('USE_SQLITE'), default=False):
+if str_to_bool(get_env('USE_SQLITE'), default=False):
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -95,14 +107,14 @@ if str_to_bool(os.getenv('USE_SQLITE'), default=False):
         }
     }
 else:
-    mysql_addon_uri = os.getenv('MYSQL_ADDON_URI', '')
+    mysql_addon_uri = get_env('MYSQL_ADDON_URI', '')
     parsed_uri = urlparse(mysql_addon_uri) if mysql_addon_uri else None
 
-    db_name = os.getenv('MYSQL_ADDON_DB') or os.getenv('DB_NAME')
-    db_user = os.getenv('MYSQL_ADDON_USER') or os.getenv('DB_USER')
-    db_password = os.getenv('MYSQL_ADDON_PASSWORD') or os.getenv('DB_PASSWORD')
-    db_host = os.getenv('MYSQL_ADDON_HOST') or os.getenv('DB_HOST')
-    db_port = os.getenv('MYSQL_ADDON_PORT') or os.getenv('DB_PORT')
+    db_name = get_env('MYSQL_ADDON_DB') or get_env('DB_NAME')
+    db_user = get_env('MYSQL_ADDON_USER') or get_env('DB_USER')
+    db_password = get_env('MYSQL_ADDON_PASSWORD') or get_env('DB_PASSWORD')
+    db_host = get_env('MYSQL_ADDON_HOST') or get_env('DB_HOST')
+    db_port = get_env('MYSQL_ADDON_PORT') or get_env('DB_PORT')
 
     # Fallback final: extraer credenciales desde MYSQL_ADDON_URI si faltan campos puntuales.
     if parsed_uri:
@@ -163,10 +175,10 @@ STORAGES = {
 
 
 if not DEBUG:
-    SECURE_SSL_REDIRECT = str_to_bool(os.getenv('SECURE_SSL_REDIRECT'), default=True)
+    SECURE_SSL_REDIRECT = str_to_bool(get_env('SECURE_SSL_REDIRECT'), default=True)
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
-    SECURE_HSTS_SECONDS = int(os.getenv('SECURE_HSTS_SECONDS', '31536000'))
+    SECURE_HSTS_SECONDS = int(get_env('SECURE_HSTS_SECONDS', '31536000'))
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
 
