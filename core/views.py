@@ -57,6 +57,7 @@ def registro(request):
     return render(request, 'core/registro.html', {'form': RegistroForm()})
 
 
+@require_POST
 def logout_view(request):
     logout(request)
     return redirect('login')
@@ -77,7 +78,8 @@ def completar_tema(request, tema):
     profile = _get_user_profile(request.user)
     tema_actual = profile.ultimo_tema_desbloqueado
 
-    if tema >= tema_actual:
+    # Solo avanzar si se completa exactamente el tema actual (evita saltar temas)
+    if tema == tema_actual:
         profile.ultimo_tema_desbloqueado = tema + 1
         profile.save(update_fields=['ultimo_tema_desbloqueado'])
 
