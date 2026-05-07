@@ -2,6 +2,7 @@ from pathlib import Path
 import os
 from urllib.parse import urlparse
 from dotenv import load_dotenv
+import dj_database_url
 
 # Cargar variables del archivo .env (si existe)
 load_dotenv()
@@ -98,13 +99,23 @@ WSGI_APPLICATION = 'financekids.wsgi.application'
 # ------------------------
 # BASE DE DATOS
 # ------------------------
-# Establece USE_SQLITE=True en .env para desarrollo sin MySQL
+# Prioridad: 1) USE_SQLITE=True (local sin BD)  2) DATABASE_URL (Render)
+#            3) MYSQL_ADDON_* (Clever Cloud)     4) DB_* (MySQL local)
 if str_to_bool(get_env('USE_SQLITE'), default=False):
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': BASE_DIR / 'db.sqlite3',
         }
+    }
+elif get_env('DATABASE_URL'):
+    # Render inyecta DATABASE_URL apuntando a PostgreSQL automaticamente.
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=get_env('DATABASE_URL'),
+            conn_max_age=600,
+            ssl_require=not DEBUG,
+        )
     }
 else:
     mysql_addon_uri = get_env('MYSQL_ADDON_URI', '')
@@ -116,7 +127,6 @@ else:
     db_host = get_env('MYSQL_ADDON_HOST') or get_env('DB_HOST')
     db_port = get_env('MYSQL_ADDON_PORT') or get_env('DB_PORT')
 
-    # Fallback final: extraer credenciales desde MYSQL_ADDON_URI si faltan campos puntuales.
     if parsed_uri:
         db_name = db_name or (parsed_uri.path.lstrip('/') if parsed_uri.path else None)
         db_user = db_user or parsed_uri.username
@@ -127,7 +137,6 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            # Prioriza MYSQL_ADDON_* (Clever Cloud) y deja DB_* como alternativa local.
             'NAME': db_name or 'financekids',
             'USER': db_user or 'root',
             'PASSWORD': db_password or '',
