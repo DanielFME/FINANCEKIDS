@@ -44,10 +44,10 @@
 
   <rect x="720" y="215" width="360" height="240" class="app"/>
   <text x="900" y="257" text-anchor="middle" class="label">Aplicación web Django</text>
-  <text x="900" y="287" text-anchor="middle" class="text">`financekids`, `core` y `game`</text>
-  <text x="900" y="312" text-anchor="middle" class="text">rutas, vistas, templates, autenticación</text>
-  <text x="900" y="337" text-anchor="middle" class="text">registro y desbloqueo de temas</text>
-  <text x="900" y="362" text-anchor="middle" class="text">sirve estaticos con WhiteNoise</text>
+  <text x="900" y="287" text-anchor="middle" class="text">rutas, vistas, templates y autenticación</text>
+  <text x="900" y="312" text-anchor="middle" class="text">registro y desbloqueo de temas</text>
+  <text x="900" y="337" text-anchor="middle" class="text">sirve estáticos con WhiteNoise</text>
+  <text x="900" y="362" text-anchor="middle" class="text">expone páginas HTML server-side</text>
   <text x="900" y="392" text-anchor="middle" class="small">Python 3.11+ · Django 5 · Gunicorn</text>
   <text x="900" y="418" text-anchor="middle" class="small">usa Django ORM para persistencia</text>
 
@@ -67,6 +67,6 @@
   <text x="965" y="486" text-anchor="middle" class="small">lectura y escritura</text>
 
   <rect x="340" y="710" width="600" height="80" class="note"/>
-  <text x="640" y="744" text-anchor="middle" class="text">Nota: en desarrollo rápido puede usarse SQLite y existe compatibilidad con MySQL.</text>
+  <text x="640" y="744" text-anchor="middle" class="text">Nota: en desarrollo rápido puede usarse SQLite para simplificar el entorno local.</text>
   <text x="640" y="769" text-anchor="middle" class="small">La vista de contenedores muestra la arquitectura objetivo de producción.</text>
 </svg>
