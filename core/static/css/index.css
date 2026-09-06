@@ -624,3 +624,41 @@ body::after {
     .hero-title     { font-size: 2rem; }
     .progress-glass { padding: 18px 16px; }
 }
+
+.progress-stats {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.temas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 24px;
+}
+
+.tema-slot {
+    min-width: 0;
+}
+
+.section-actions {
+    margin-top: 3rem;
+    text-align: center;
+}
+
+@media (max-width: 576px) {
+    .progress-stats {
+        gap: 12px;
+    }
+
+    .prog-divider {
+        display: none;
+    }
+
+    .temas-grid {
+        gap: 18px;
+    }
+}

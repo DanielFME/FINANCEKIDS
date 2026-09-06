@@ -634,3 +634,45 @@ body::after {
         padding: 28px 20px;
     }
 }
+.field-help {
+    color: var(--gris-texto);
+    font-size: 0.82rem;
+    font-weight: 700;
+    margin: -4px 0 12px;
+}
+
+.input-kids.is-invalid-live {
+    border-color: var(--error-rojo);
+    box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.12);
+    background: #fff5f5;
+}
+
+.input-kids.is-valid-live {
+    border-color: #00c97a;
+    box-shadow: 0 0 0 4px rgba(0, 201, 122, 0.12);
+}
+
+@media (max-width: 576px) {
+    .main-wrap {
+        padding: 20px 12px;
+    }
+
+    .login-container {
+        border-radius: 22px;
+    }
+
+    .login-left {
+        padding: 30px 22px;
+    }
+
+    .logo-wrap {
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+    .login-title,
+    .login-sub,
+    .field-help {
+        text-align: center;
+    }
+}
