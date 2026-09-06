@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">Diagrama C4 de contexto de FINANCEKIDS</title>
+  <desc id="desc">Relación entre estudiantes, tutores, la plataforma FINANCEKIDS, Render y la base de datos PostgreSQL.</desc>
+  <defs>
+    <style>
+      .bg { fill: #f8fafc; }
+      .title { font: 700 28px Arial, sans-serif; fill: #0f172a; }
+      .subtitle { font: 400 16px Arial, sans-serif; fill: #334155; }
+      .label { font: 700 20px Arial, sans-serif; fill: #0f172a; }
+      .text { font: 400 16px Arial, sans-serif; fill: #1e293b; }
+      .small { font: 400 14px Arial, sans-serif; fill: #334155; }
+      .boundary { fill: #e0f2fe; stroke: #0284c7; stroke-width: 3; rx: 24; ry: 24; }
+      .person { fill: #fef3c7; stroke: #d97706; stroke-width: 2.5; rx: 20; ry: 20; }
+      .system { fill: #dbeafe; stroke: #2563eb; stroke-width: 3; rx: 20; ry: 20; }
+      .external { fill: #ede9fe; stroke: #7c3aed; stroke-width: 2.5; rx: 20; ry: 20; }
+      .db { fill: #dcfce7; stroke: #16a34a; stroke-width: 2.5; rx: 20; ry: 20; }
+      .line { stroke: #475569; stroke-width: 2.5; fill: none; marker-end: url(#arrow); }
+    </style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" width="1200" height="760"/>
+  <text x="600" y="52" text-anchor="middle" class="title">FINANCEKIDS - C4 Contexto</text>
+  <text x="600" y="82" text-anchor="middle" class="subtitle">Vista general del sistema, usuarios y plataformas relacionadas</text>
+
+  <rect x="320" y="130" width="560" height="480" class="boundary"/>
+  <text x="600" y="165" text-anchor="middle" class="label">Plataforma FINANCEKIDS</text>
+  <text x="600" y="192" text-anchor="middle" class="small">Aplicación web educativa para aprendizaje financiero infantil</text>
+
+  <rect x="445" y="275" width="310" height="170" class="system"/>
+  <text x="600" y="318" text-anchor="middle" class="label">FINANCEKIDS</text>
+  <text x="600" y="346" text-anchor="middle" class="text">Lecciones, juegos, preguntas y progreso</text>
+  <text x="600" y="374" text-anchor="middle" class="text">registro, autenticación y avance por temas</text>
+  <text x="600" y="405" text-anchor="middle" class="small">Django 5 · templates server-side · Render</text>
+
+  <rect x="70" y="210" width="210" height="120" class="person"/>
+  <text x="175" y="255" text-anchor="middle" class="label">Estudiante</text>
+  <text x="175" y="285" text-anchor="middle" class="text">Consulta contenido</text>
+  <text x="175" y="310" text-anchor="middle" class="text">y completa actividades</text>
+
+  <rect x="70" y="420" width="210" height="120" class="person"/>
+  <text x="175" y="465" text-anchor="middle" class="label">Tutor o familia</text>
+  <text x="175" y="495" text-anchor="middle" class="text">Registra al menor</text>
+  <text x="175" y="520" text-anchor="middle" class="text">y acompaña el uso</text>
+
+  <rect x="930" y="215" width="210" height="115" class="external"/>
+  <text x="1035" y="258" text-anchor="middle" class="label">Render</text>
+  <text x="1035" y="288" text-anchor="middle" class="text">Hospeda la app</text>
+  <text x="1035" y="313" text-anchor="middle" class="text">en producción</text>
+
+  <rect x="930" y="420" width="210" height="120" class="db"/>
+  <text x="1035" y="463" text-anchor="middle" class="label">PostgreSQL</text>
+  <text x="1035" y="493" text-anchor="middle" class="text">Guarda usuarios,</text>
+  <text x="1035" y="518" text-anchor="middle" class="text">perfiles y progreso</text>
+
+  <path d="M 280 270 C 340 270, 390 300, 445 330" class="line"/>
+  <text x="335" y="245" text-anchor="middle" class="small">usa vía navegador</text>
+
+  <path d="M 280 480 C 340 480, 390 430, 445 390" class="line"/>
+  <text x="340" y="525" text-anchor="middle" class="small">registra y supervisa</text>
+
+  <path d="M 755 330 C 820 320, 870 295, 930 275" class="line"/>
+  <text x="842" y="304" text-anchor="middle" class="small">se despliega en</text>
+
+  <path d="M 755 390 C 830 415, 875 450, 930 480" class="line"/>
+  <text x="840" y="445" text-anchor="middle" class="small">persiste datos en</text>
+</svg>
