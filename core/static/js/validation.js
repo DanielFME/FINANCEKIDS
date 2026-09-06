@@ -121,10 +121,18 @@
             const response = await fetch(`${endpoint}?email=${encodeURIComponent(value)}`, {
                 headers: { 'X-Requested-With': 'XMLHttpRequest' },
             });
-            if (!response.ok) {
-                return setFieldState(input, 'No pudimos validar el correo en este momento.');
+            let data = null;
+            try {
+                data = await response.json();
+            } catch (jsonError) {
+                data = null;
             }
-            const data = await response.json();
+            if (!response.ok) {
+                return setFieldState(
+                    input,
+                    (data && data.message) || 'No pudimos validar el correo en este momento.'
+                );
+            }
             if (!data.available) {
                 return setFieldState(input, data.message || 'Este correo ya está registrado.');
             }

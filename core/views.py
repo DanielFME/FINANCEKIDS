@@ -1,6 +1,5 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.http import JsonResponse
@@ -24,11 +23,7 @@ def _resolve_auth_username(identifier):
     profile = UserProfile.objects.select_related('usuario').filter(
         email_tutor__iexact=identifier
     ).first()
-    if profile is not None:
-        return profile.usuario.username
-
-    user = User.objects.filter(email__iexact=identifier).first()
-    return user.username if user is not None else identifier
+    return profile.usuario.username if profile is not None else identifier
 
 
 def _email_validation_rate_limited(request):
