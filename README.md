@@ -16,6 +16,15 @@ Aplicacion web educativa construida con Django para aprendizaje financiero infan
 - `game/`: modelos de dominio (temas y perfil)
 - `scripts/`: utilidades operativas locales
 
+## Arquitectura (C4)
+Diagramas editables en `img/architecture/`.
+
+### Contexto
+![Diagrama C4 de contexto de FINANCEKIDS](img/architecture/financekids-c4-contexto.svg)
+
+### Contenedores
+![Diagrama C4 de contenedores de FINANCEKIDS](img/architecture/financekids-c4-contenedores.svg)
+
 ## Requisitos
 - Python instalado
 - Git instalado

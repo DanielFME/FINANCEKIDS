@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="840" viewBox="0 0 1280 840" role="img" aria-labelledby="title desc">
+  <title id="title">Diagrama C4 de contenedores de FINANCEKIDS</title>
+  <desc id="desc">Contenedores principales de FINANCEKIDS: navegador del usuario, aplicacion Django y base de datos relacional por entorno.</desc>
+  <defs>
+    <style>
+      .bg { fill: #f8fafc; }
+      .title { font: 700 28px Arial, sans-serif; fill: #0f172a; }
+      .subtitle { font: 400 16px Arial, sans-serif; fill: #334155; }
+      .label { font: 700 20px Arial, sans-serif; fill: #0f172a; }
+      .text { font: 400 15px Arial, sans-serif; fill: #1e293b; }
+      .small { font: 400 14px Arial, sans-serif; fill: #334155; }
+      .boundary { fill: #e0f2fe; stroke: #0284c7; stroke-width: 3; rx: 24; ry: 24; }
+      .person { fill: #fef3c7; stroke: #d97706; stroke-width: 2.5; rx: 20; ry: 20; }
+      .browser { fill: #dbeafe; stroke: #2563eb; stroke-width: 2.5; rx: 18; ry: 18; }
+      .app { fill: #dcfce7; stroke: #16a34a; stroke-width: 2.5; rx: 18; ry: 18; }
+      .db { fill: #ede9fe; stroke: #7c3aed; stroke-width: 2.5; rx: 18; ry: 18; }
+      .line { stroke: #475569; stroke-width: 2.5; fill: none; marker-end: url(#arrow); }
+      .dashed { stroke-dasharray: 8 8; }
+    </style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" width="1280" height="840"/>
+  <text x="640" y="52" text-anchor="middle" class="title">FINANCEKIDS - C4 Contenedores</text>
+  <text x="640" y="82" text-anchor="middle" class="subtitle">Contenedores principales y flujo de datos de la aplicacion</text>
+
+  <rect x="60" y="310" width="210" height="120" class="person"/>
+  <text x="165" y="355" text-anchor="middle" class="label">Estudiante / tutor</text>
+  <text x="165" y="385" text-anchor="middle" class="text">Accede desde un</text>
+  <text x="165" y="410" text-anchor="middle" class="text">navegador web</text>
+
+  <rect x="320" y="120" width="860" height="560" class="boundary"/>
+  <text x="750" y="158" text-anchor="middle" class="label">Sistema FINANCEKIDS</text>
+  <text x="750" y="185" text-anchor="middle" class="small">Aplicacion server-side desplegada en Render</text>
+
+  <rect x="390" y="250" width="270" height="170" class="browser"/>
+  <text x="525" y="292" text-anchor="middle" class="label">Navegador web</text>
+  <text x="525" y="322" text-anchor="middle" class="text">HTML, CSS y JS</text>
+  <text x="525" y="347" text-anchor="middle" class="text">muestra login, lecciones,</text>
+  <text x="525" y="372" text-anchor="middle" class="text">juegos y preguntas</text>
+  <text x="525" y="400" text-anchor="middle" class="small">Interfaz usada por estudiantes y tutores</text>
+
+  <rect x="720" y="215" width="360" height="240" class="app"/>
+  <text x="900" y="257" text-anchor="middle" class="label">Aplicacion web Django</text>
+  <text x="900" y="287" text-anchor="middle" class="text">`financekids`, `core` y `game`</text>
+  <text x="900" y="312" text-anchor="middle" class="text">rutas, vistas, templates, autenticacion</text>
+  <text x="900" y="337" text-anchor="middle" class="text">registro y desbloqueo de temas</text>
+  <text x="900" y="362" text-anchor="middle" class="text">sirve estaticos con WhiteNoise</text>
+  <text x="900" y="392" text-anchor="middle" class="small">Python 3.11+ · Django 5 · Gunicorn</text>
+  <text x="900" y="418" text-anchor="middle" class="small">usa Django ORM para persistencia</text>
+
+  <rect x="720" y="505" width="360" height="125" class="db"/>
+  <text x="900" y="547" text-anchor="middle" class="label">Base de datos relacional</text>
+  <text x="900" y="577" text-anchor="middle" class="text">PostgreSQL en produccion</text>
+  <text x="900" y="602" text-anchor="middle" class="text">SQLite en desarrollo rapido</text>
+  <text x="900" y="627" text-anchor="middle" class="text">MySQL como compatibilidad</text>
+
+  <path d="M 270 370 C 310 370, 340 360, 390 340" class="line"/>
+  <text x="330" y="340" text-anchor="middle" class="small">HTTPS</text>
+
+  <path d="M 660 335 C 685 335, 695 335, 720 335" class="line"/>
+  <text x="690" y="318" text-anchor="middle" class="small">formularios y paginas renderizadas</text>
+
+  <path d="M 900 455 C 900 475, 900 485, 900 505" class="line"/>
+  <text x="965" y="486" text-anchor="middle" class="small">lectura y escritura</text>
+
+  <path d="M 1080 567 C 1150 567, 1160 567, 1215 567" class="line dashed"/>
+  <text x="1148" y="545" text-anchor="middle" class="small">segun entorno</text>
+
+  <rect x="1110" y="515" width="120" height="105" class="db"/>
+  <text x="1170" y="553" text-anchor="middle" class="label">Entorno</text>
+  <text x="1170" y="580" text-anchor="middle" class="small">Render</text>
+  <text x="1170" y="602" text-anchor="middle" class="small">local</text>
+</svg>
