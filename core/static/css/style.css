@@ -641,3 +641,59 @@
 		display: none;
 	}
 }
+
+.sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+.live-error {
+	display: none;
+	margin-top: 8px;
+	padding: 8px 12px;
+	border-radius: 10px;
+	font-size: 0.8rem;
+	font-weight: 700;
+	background: #fef2f2;
+	border: 1px solid rgba(220, 38, 38, 0.2);
+	color: #991b1b;
+}
+
+.live-error.is-visible {
+	display: block;
+}
+
+.live-error.is-success {
+	background: #ecfdf5;
+	border-color: rgba(5, 150, 105, 0.18);
+	color: #047857;
+}
+
+.responsive-two-column {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 16px;
+}
+
+.card-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+	gap: 24px;
+}
+
+@media (max-width: 576px) {
+	.responsive-two-column {
+		grid-template-columns: 1fr;
+	}
+
+	.card-grid {
+		gap: 18px;
+	}
+}

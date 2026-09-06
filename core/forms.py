@@ -41,6 +41,12 @@ class RegistroForm(forms.Form):
             raise ValidationError('El nombre de usuario ya existe.')
         return username
 
+    def clean_email_tutor(self):
+        email_tutor = self.cleaned_data['email_tutor'].strip().lower()
+        if UserProfile.objects.filter(email_tutor__iexact=email_tutor).exists():
+            raise ValidationError('El email del tutor ya está registrado.')
+        return email_tutor
+
     def clean_fecha_nacimiento(self):
         fecha_nacimiento = self.cleaned_data.get('fecha_nacimiento')
         if fecha_nacimiento and fecha_nacimiento > timezone.localdate():
@@ -75,6 +81,7 @@ class RegistroForm(forms.Form):
 
         user = User.objects.create_user(
             username=self.cleaned_data['username'],
+            email=self.cleaned_data.get('email_tutor') or '',
             password=self.cleaned_data['password1'],
         )
         UserProfile.objects.update_or_create(

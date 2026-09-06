@@ -201,6 +201,14 @@ class RegistroFormTests(TestCase):
 		profile = UserProfile.objects.get(usuario=user)
 		self.assertIsNone(profile.registro_ip)
 
+	def test_email_tutor_duplicado_produce_error(self):
+		owner = User.objects.create_user(username='owner', password='Segura123!')
+		UserProfile.objects.create(usuario=owner, email_tutor='tutor@test.com')
+
+		form = self._form(username='otro_usuario')
+		self.assertFalse(form.is_valid())
+		self.assertIn('email_tutor', form.errors)
+
 	def test_fecha_nacimiento_hoy_es_valida(self):
 		"""Birth-date equal to today is accepted (boundary value)."""
 		today = timezone.localdate().isoformat()
@@ -236,6 +244,22 @@ class AdditionalViewTests(TestCase):
 		self.assertEqual(response.status_code, 200)
 		self.assertContains(response, 'Usuario o contraseña incorrectos')
 
+	def test_login_con_email_tutor_redirige_a_index(self):
+		profile = UserProfile.objects.get(usuario=self.user)
+		profile.email_tutor = 'familia@example.com'
+		profile.save(update_fields=['email_tutor'])
+
+		response = self.client.post(
+			reverse('login'),
+			data={'identifier': 'familia@example.com', 'password': self.password},
+		)
+		self.assertRedirects(response, reverse('index'))
+
+	def test_login_get_incluye_script_de_validacion(self):
+		response = self.client.get(reverse('login'))
+		self.assertContains(response, 'js/validation.js')
+		self.assertContains(response, 'Correo electrónico o usuario')
+
 	# -- registro view -------------------------------------------------------
 
 	def test_registro_get_renderiza_formulario(self):
@@ -243,6 +267,28 @@ class AdditionalViewTests(TestCase):
 		response = self.client.get(reverse('registro'))
 		self.assertEqual(response.status_code, 200)
 		self.assertContains(response, 'form')
+		self.assertContains(response, 'js/validation.js')
+		self.assertContains(response, reverse('validar_email_tutor'))
+
+	def test_validar_email_tutor_devuelve_no_disponible_si_existe(self):
+		profile = UserProfile.objects.get(usuario=self.user)
+		profile.email_tutor = 'repetido@example.com'
+		profile.save(update_fields=['email_tutor'])
+
+		response = self.client.get(reverse('validar_email_tutor'), {'email': 'repetido@example.com'})
+		self.assertEqual(response.status_code, 200)
+		self.assertJSONEqual(
+			response.content,
+			{'available': False, 'message': 'Este correo ya está registrado.'},
+		)
+
+	def test_validar_email_tutor_devuelve_disponible_si_no_existe(self):
+		response = self.client.get(reverse('validar_email_tutor'), {'email': 'nuevo@example.com'})
+		self.assertEqual(response.status_code, 200)
+		self.assertJSONEqual(
+			response.content,
+			{'available': True, 'message': 'Correo disponible.'},
+		)
 
 	# -- logout view ---------------------------------------------------------
 

@@ -10,6 +10,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="{% static 'css/index.css' %}">
 </head>
 <body>
@@ -83,18 +84,18 @@
     <div class="progress-overview">
         <div class="container">
             <div class="progress-glass">
-                <div class="d-flex align-items-center gap-3 mb-3 flex-wrap justify-content-center">
+                <div class="progress-stats">
 
                     <div class="prog-stat">
                         <div class="num">{{ progreso_actual|add:"-1" }}</div>
                         <div class="lbl">Temas completados</div>
                     </div>
-                    <div class="prog-divider d-none d-sm-block"></div>
+                    <div class="prog-divider"></div>
                     <div class="prog-stat">
                         <div class="num">10</div>
                         <div class="lbl">Temas totales</div>
                     </div>
-                    <div class="prog-divider d-none d-sm-block"></div>
+                    <div class="prog-divider"></div>
                     <div class="prog-stat">
                         <div class="num highlight">🏆</div>
                         <div class="lbl">¡Sigue así!</div>
@@ -120,10 +121,10 @@
                 <i class="bi bi-book-fill"></i> Tus temas
             </div>
 
-            <div class="row g-4 justify-content-center">
+            <div class="temas-grid">
 
                 <!-- TEMA 1 — siempre desbloqueado -->
-                <div class="col-12 col-sm-6 col-lg-4">
+                <div class="tema-slot">
                     <a href="{% url 'aprendizaje' tema=1 %}" class="tema-card tc-1">
                         <span class="tema-num">Tema 01</span>
                         <span class="tema-emoji">🧩</span>
@@ -139,7 +140,7 @@
                 </div>
 
                 <!-- TEMA 2 -->
-                <div class="col-12 col-sm-6 col-lg-4">
+                <div class="tema-slot">
                     {% if progreso_actual >= 2 %}
                         <a href="{% url 'aprendizaje' tema=2 %}" class="tema-card tc-2">
                             <span class="tema-num">Tema 02</span>
@@ -165,7 +166,7 @@
                 </div>
 
                 <!-- TEMA 3 -->
-                <div class="col-12 col-sm-6 col-lg-4">
+                <div class="tema-slot">
                     {% if progreso_actual >= 3 %}
                         <a href="{% url 'aprendizaje' tema=3 %}" class="tema-card tc-3">
                             <span class="tema-num">Tema 03</span>
@@ -192,7 +193,7 @@
 
                 <!-- TEMAS 4–10 → Próximamente -->
                 {% for n in "4567890" %}
-                <div class="col-12 col-sm-6 col-lg-4">
+                <div class="tema-slot">
                     <div class="tema-card-locked">
                         <span class="locked-badge">🚧 Próximamente</span>
                         <span class="lock-icon-sm">🚧</span>
@@ -203,10 +204,10 @@
                 </div>
                 {% endfor %}
 
-            </div><!-- /row -->
+            </div><!-- /temas-grid -->
 
             <!-- Botón cerrar sesión -->
-            <div class="text-center mt-5">
+            <div class="section-actions">
                 <a href="{% url 'logout' %}" class="btn-logout">
                     <i class="bi bi-box-arrow-right"></i> Cerrar sesión
                 </a>
