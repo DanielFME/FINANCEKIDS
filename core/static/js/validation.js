@@ -121,6 +121,9 @@
             const response = await fetch(`${endpoint}?email=${encodeURIComponent(value)}`, {
                 headers: { 'X-Requested-With': 'XMLHttpRequest' },
             });
+            if (!response.ok) {
+                return setFieldState(input, 'No pudimos validar el correo en este momento.');
+            }
             const data = await response.json();
             if (!data.available) {
                 return setFieldState(input, data.message || 'Este correo ya está registrado.');

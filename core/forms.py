@@ -81,7 +81,6 @@ class RegistroForm(forms.Form):
 
         user = User.objects.create_user(
             username=self.cleaned_data['username'],
-            email=self.cleaned_data.get('email_tutor') or '',
             password=self.cleaned_data['password1'],
         )
         UserProfile.objects.update_or_create(

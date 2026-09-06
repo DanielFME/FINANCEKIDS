@@ -290,6 +290,22 @@ class AdditionalViewTests(TestCase):
 			{'available': True, 'message': 'Correo disponible.'},
 		)
 
+	def test_validar_email_tutor_rechaza_email_vacio(self):
+		response = self.client.get(reverse('validar_email_tutor'), {'email': ''})
+		self.assertEqual(response.status_code, 200)
+		self.assertJSONEqual(
+			response.content,
+			{'available': False, 'message': 'Ingresa un correo electrónico.'},
+		)
+
+	def test_validar_email_tutor_rechaza_email_invalido(self):
+		response = self.client.get(reverse('validar_email_tutor'), {'email': 'correo-invalido'})
+		self.assertEqual(response.status_code, 200)
+		self.assertJSONEqual(
+			response.content,
+			{'available': False, 'message': 'Ingresa un correo electrónico válido.'},
+		)
+
 	# -- logout view ---------------------------------------------------------
 
 	def test_logout_redirige_a_login(self):
