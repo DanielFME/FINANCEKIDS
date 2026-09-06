@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="840" viewBox="0 0 1280 840" role="img" aria-labelledby="title desc">
   <title id="title">Diagrama C4 de contenedores de FINANCEKIDS</title>
-  <desc id="desc">Contenedores principales de FINANCEKIDS: navegador del usuario, aplicacion Django y base de datos relacional por entorno.</desc>
+  <desc id="desc">Contenedores principales de FINANCEKIDS: navegador del usuario, aplicacion Django y PostgreSQL como persistencia principal en produccion.</desc>
   <defs>
     <style>
       .bg { fill: #f8fafc; }
@@ -15,7 +15,7 @@
       .app { fill: #dcfce7; stroke: #16a34a; stroke-width: 2.5; rx: 18; ry: 18; }
       .db { fill: #ede9fe; stroke: #7c3aed; stroke-width: 2.5; rx: 18; ry: 18; }
       .line { stroke: #475569; stroke-width: 2.5; fill: none; marker-end: url(#arrow); }
-      .dashed { stroke-dasharray: 8 8; }
+      .note { fill: #fff7ed; stroke: #ea580c; stroke-width: 2; rx: 14; ry: 14; }
     </style>
     <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
       <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
@@ -52,10 +52,10 @@
   <text x="900" y="418" text-anchor="middle" class="small">usa Django ORM para persistencia</text>
 
   <rect x="720" y="505" width="360" height="125" class="db"/>
-  <text x="900" y="547" text-anchor="middle" class="label">Base de datos relacional</text>
-  <text x="900" y="577" text-anchor="middle" class="text">PostgreSQL en produccion</text>
-  <text x="900" y="602" text-anchor="middle" class="text">SQLite en desarrollo rapido</text>
-  <text x="900" y="627" text-anchor="middle" class="text">MySQL como compatibilidad</text>
+  <text x="900" y="547" text-anchor="middle" class="label">PostgreSQL</text>
+  <text x="900" y="577" text-anchor="middle" class="text">Persistencia principal</text>
+  <text x="900" y="602" text-anchor="middle" class="text">de usuarios, perfiles</text>
+  <text x="900" y="627" text-anchor="middle" class="text">y progreso</text>
 
   <path d="M 270 370 C 310 370, 340 360, 390 340" class="line"/>
   <text x="330" y="340" text-anchor="middle" class="small">HTTPS</text>
@@ -66,11 +66,7 @@
   <path d="M 900 455 C 900 475, 900 485, 900 505" class="line"/>
   <text x="965" y="486" text-anchor="middle" class="small">lectura y escritura</text>
 
-  <path d="M 1080 567 C 1150 567, 1160 567, 1215 567" class="line dashed"/>
-  <text x="1148" y="545" text-anchor="middle" class="small">segun entorno</text>
-
-  <rect x="1110" y="515" width="120" height="105" class="db"/>
-  <text x="1170" y="553" text-anchor="middle" class="label">Entorno</text>
-  <text x="1170" y="580" text-anchor="middle" class="small">Render</text>
-  <text x="1170" y="602" text-anchor="middle" class="small">local</text>
+  <rect x="340" y="710" width="600" height="80" class="note"/>
+  <text x="640" y="744" text-anchor="middle" class="text">Nota: en desarrollo rapido puede usarse SQLite y existe compatibilidad con MySQL.</text>
+  <text x="640" y="769" text-anchor="middle" class="small">La vista de contenedores muestra la arquitectura objetivo de produccion.</text>
 </svg>
