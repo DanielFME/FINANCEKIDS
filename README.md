@@ -17,7 +17,7 @@ Aplicacion web educativa construida con Django para aprendizaje financiero infan
 - `scripts/`: utilidades operativas locales
 
 ## Arquitectura (C4)
-Diagramas editables en `img/architecture/`.
+Diagramas en SVG dentro de `img/architecture/`.
 
 ### Contexto
 ![Diagrama C4 de contexto de FINANCEKIDS](img/architecture/financekids-c4-contexto.svg)
