@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="840" viewBox="0 0 1280 840" role="img" aria-labelledby="title desc">
   <title id="title">Diagrama C4 de contenedores de FINANCEKIDS</title>
-  <desc id="desc">Contenedores principales de FINANCEKIDS: navegador del usuario, aplicacion Django y PostgreSQL como persistencia principal en produccion.</desc>
+  <desc id="desc">Contenedores principales de FINANCEKIDS: navegador del usuario, aplicación Django y PostgreSQL como persistencia principal en producción.</desc>
   <defs>
     <style>
       .bg { fill: #f8fafc; }
@@ -24,7 +24,7 @@
 
   <rect class="bg" width="1280" height="840"/>
   <text x="640" y="52" text-anchor="middle" class="title">FINANCEKIDS - C4 Contenedores</text>
-  <text x="640" y="82" text-anchor="middle" class="subtitle">Contenedores principales y flujo de datos de la aplicacion</text>
+  <text x="640" y="82" text-anchor="middle" class="subtitle">Contenedores principales y flujo de datos de la aplicación</text>
 
   <rect x="60" y="310" width="210" height="120" class="person"/>
   <text x="165" y="355" text-anchor="middle" class="label">Estudiante / tutor</text>
@@ -33,7 +33,7 @@
 
   <rect x="320" y="120" width="860" height="560" class="boundary"/>
   <text x="750" y="158" text-anchor="middle" class="label">Sistema FINANCEKIDS</text>
-  <text x="750" y="185" text-anchor="middle" class="small">Aplicacion server-side desplegada en Render</text>
+  <text x="750" y="185" text-anchor="middle" class="small">Aplicación server-side desplegada en Render</text>
 
   <rect x="390" y="250" width="270" height="170" class="browser"/>
   <text x="525" y="292" text-anchor="middle" class="label">Navegador web</text>
@@ -43,9 +43,9 @@
   <text x="525" y="400" text-anchor="middle" class="small">Interfaz usada por estudiantes y tutores</text>
 
   <rect x="720" y="215" width="360" height="240" class="app"/>
-  <text x="900" y="257" text-anchor="middle" class="label">Aplicacion web Django</text>
+  <text x="900" y="257" text-anchor="middle" class="label">Aplicación web Django</text>
   <text x="900" y="287" text-anchor="middle" class="text">`financekids`, `core` y `game`</text>
-  <text x="900" y="312" text-anchor="middle" class="text">rutas, vistas, templates, autenticacion</text>
+  <text x="900" y="312" text-anchor="middle" class="text">rutas, vistas, templates, autenticación</text>
   <text x="900" y="337" text-anchor="middle" class="text">registro y desbloqueo de temas</text>
   <text x="900" y="362" text-anchor="middle" class="text">sirve estaticos con WhiteNoise</text>
   <text x="900" y="392" text-anchor="middle" class="small">Python 3.11+ · Django 5 · Gunicorn</text>
@@ -67,6 +67,6 @@
   <text x="965" y="486" text-anchor="middle" class="small">lectura y escritura</text>
 
   <rect x="340" y="710" width="600" height="80" class="note"/>
-  <text x="640" y="744" text-anchor="middle" class="text">Nota: en desarrollo rapido puede usarse SQLite y existe compatibilidad con MySQL.</text>
-  <text x="640" y="769" text-anchor="middle" class="small">La vista de contenedores muestra la arquitectura objetivo de produccion.</text>
+  <text x="640" y="744" text-anchor="middle" class="text">Nota: en desarrollo rápido puede usarse SQLite y existe compatibilidad con MySQL.</text>
+  <text x="640" y="769" text-anchor="middle" class="small">La vista de contenedores muestra la arquitectura objetivo de producción.</text>
 </svg>

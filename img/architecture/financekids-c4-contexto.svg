@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
   <title id="title">Diagrama C4 de contexto de FINANCEKIDS</title>
-  <desc id="desc">Relacion entre estudiantes, tutores, la plataforma FINANCEKIDS, Render y la base de datos PostgreSQL.</desc>
+  <desc id="desc">Relación entre estudiantes, tutores, la plataforma FINANCEKIDS, Render y la base de datos PostgreSQL.</desc>
   <defs>
     <style>
       .bg { fill: #f8fafc; }
@@ -27,12 +27,12 @@
 
   <rect x="320" y="130" width="560" height="480" class="boundary"/>
   <text x="600" y="165" text-anchor="middle" class="label">Plataforma FINANCEKIDS</text>
-  <text x="600" y="192" text-anchor="middle" class="small">Aplicacion web educativa para aprendizaje financiero infantil</text>
+  <text x="600" y="192" text-anchor="middle" class="small">Aplicación web educativa para aprendizaje financiero infantil</text>
 
   <rect x="445" y="275" width="310" height="170" class="system"/>
   <text x="600" y="318" text-anchor="middle" class="label">FINANCEKIDS</text>
   <text x="600" y="346" text-anchor="middle" class="text">Lecciones, juegos, preguntas y progreso</text>
-  <text x="600" y="374" text-anchor="middle" class="text">registro, autenticacion y avance por temas</text>
+  <text x="600" y="374" text-anchor="middle" class="text">registro, autenticación y avance por temas</text>
   <text x="600" y="405" text-anchor="middle" class="small">Django 5 · templates server-side · Render</text>
 
   <rect x="70" y="210" width="210" height="120" class="person"/>
@@ -43,12 +43,12 @@
   <rect x="70" y="420" width="210" height="120" class="person"/>
   <text x="175" y="465" text-anchor="middle" class="label">Tutor o familia</text>
   <text x="175" y="495" text-anchor="middle" class="text">Registra al menor</text>
-  <text x="175" y="520" text-anchor="middle" class="text">y acompana el uso</text>
+  <text x="175" y="520" text-anchor="middle" class="text">y acompaña el uso</text>
 
   <rect x="930" y="215" width="210" height="115" class="external"/>
   <text x="1035" y="258" text-anchor="middle" class="label">Render</text>
   <text x="1035" y="288" text-anchor="middle" class="text">Hospeda la app</text>
-  <text x="1035" y="313" text-anchor="middle" class="text">en produccion</text>
+  <text x="1035" y="313" text-anchor="middle" class="text">en producción</text>
 
   <rect x="930" y="420" width="210" height="120" class="db"/>
   <text x="1035" y="463" text-anchor="middle" class="label">PostgreSQL</text>
@@ -56,7 +56,7 @@
   <text x="1035" y="518" text-anchor="middle" class="text">perfiles y progreso</text>
 
   <path d="M 280 270 C 340 270, 390 300, 445 330" class="line"/>
-  <text x="335" y="245" text-anchor="middle" class="small">usa via navegador</text>
+  <text x="335" y="245" text-anchor="middle" class="small">usa vía navegador</text>
 
   <path d="M 280 480 C 340 480, 390 430, 445 390" class="line"/>
   <text x="340" y="525" text-anchor="middle" class="small">registra y supervisa</text>
