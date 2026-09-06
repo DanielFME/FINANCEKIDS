@@ -306,6 +306,18 @@ class AdditionalViewTests(TestCase):
 			{'available': False, 'message': 'Ingresa un correo electrónico válido.'},
 		)
 
+	def test_validar_email_tutor_limita_intentos(self):
+		for _ in range(10):
+			response = self.client.get(reverse('validar_email_tutor'), {'email': 'nuevo@example.com'})
+			self.assertEqual(response.status_code, 200)
+
+		response = self.client.get(reverse('validar_email_tutor'), {'email': 'nuevo@example.com'})
+		self.assertEqual(response.status_code, 429)
+		self.assertJSONEqual(
+			response.content,
+			{'available': False, 'message': 'Valida nuevamente en unos segundos.'},
+		)
+
 	# -- logout view ---------------------------------------------------------
 
 	def test_logout_redirige_a_login(self):

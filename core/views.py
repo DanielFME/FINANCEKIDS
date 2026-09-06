@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
+from django.utils import timezone
 from django.views.decorators.http import require_http_methods, require_POST
 
 from core.forms import RegistroForm
@@ -28,6 +29,25 @@ def _resolve_auth_username(identifier):
 
     user = User.objects.filter(email__iexact=identifier).first()
     return user.username if user is not None else identifier
+
+
+def _email_validation_rate_limited(request):
+    limit = 10
+    window_seconds = 60
+    session_key = 'email_validation_attempts'
+    now = timezone.now().timestamp()
+    attempts = [
+        timestamp
+        for timestamp in request.session.get(session_key, [])
+        if now - timestamp < window_seconds
+    ]
+    if len(attempts) >= limit:
+        request.session[session_key] = attempts
+        return True
+
+    attempts.append(now)
+    request.session[session_key] = attempts
+    return False
 
 
 @require_http_methods(['GET', 'POST'])
@@ -88,6 +108,12 @@ def registro(request):
 
 @require_http_methods(['GET'])
 def validar_email_tutor(request):
+    if _email_validation_rate_limited(request):
+        return JsonResponse(
+            {'available': False, 'message': 'Valida nuevamente en unos segundos.'},
+            status=429,
+        )
+
     email = request.GET.get('email', '').strip().lower()
     if not email:
         return JsonResponse({'available': False, 'message': 'Ingresa un correo electrónico.'})
