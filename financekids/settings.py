@@ -182,6 +182,10 @@ STORAGES = {
 }
 
 if not DEBUG:
+    # Railway/Render terminan el TLS en el proxy y reenvían la petición como HTTP
+    # interno con el header X-Forwarded-Proto; sin esto, SECURE_SSL_REDIRECT provoca
+    # un bucle infinito de redirects (ERR_TOO_MANY_REDIRECTS).
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     SECURE_SSL_REDIRECT = str_to_bool(get_env('SECURE_SSL_REDIRECT'), default=True)
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
