@@ -43,11 +43,22 @@ class AuthAndProgressFlowTests(TestCase):
 
 	def test_completar_tema_unlocks_next_topic(self):
 		self.client.login(username=self.user.username, password=self.password)
-		response = self.client.post(reverse('completar_tema', kwargs={'tema': 1}))
+		response = self.client.post(
+			reverse('completar_tema', kwargs={'tema': 1}),
+			data={'respuesta_1': '1', 'respuesta_2': '1', 'respuesta_3': '2'},
+		)
 		self.assertRedirects(response, reverse('aprendizaje', kwargs={'tema': 2}))
 
 		profile = UserProfile.objects.get(usuario=self.user)
 		self.assertEqual(profile.ultimo_tema_desbloqueado, 2)
+
+	def test_completar_tema_rechaza_respuestas_incompletas(self):
+		self.client.login(username=self.user.username, password=self.password)
+		response = self.client.post(reverse('completar_tema', kwargs={'tema': 1}))
+		self.assertRedirects(response, reverse('preguntas1'))
+
+		profile = UserProfile.objects.get(usuario=self.user)
+		self.assertEqual(profile.ultimo_tema_desbloqueado, 1)
 
 	def test_completar_tema_rejects_get(self):
 		self.client.login(username=self.user.username, password=self.password)
@@ -247,29 +258,29 @@ class AdditionalViewTests(TestCase):
 	# -- logout view ---------------------------------------------------------
 
 	def test_logout_redirige_a_login(self):
-		"""Lines 52-53: logging out redirects to the login page."""
+		"""Logout requires a confirmation POST before redirecting."""
 		self.client.login(username=self.user.username, password=self.password)
-		response = self.client.get(reverse('logout'))
+		self.assertEqual(self.client.get(reverse('logout')).status_code, 200)
+		response = self.client.post(reverse('logout'))
 		self.assertRedirects(response, reverse('login'))
 
 	def test_logout_desconecta_al_usuario(self):
 		"""After logout the user is no longer authenticated."""
 		self.client.login(username=self.user.username, password=self.password)
-		self.client.get(reverse('logout'))
+		self.client.post(reverse('logout'))
 		response = self.client.get(reverse('index'))
 		self.assertRedirects(response, f"{reverse('login')}?next={reverse('index')}")
 
 	# -- completar_tema edge-case --------------------------------------------
 
-	def test_completar_ultimo_tema_redirige_a_index(self):
-		"""Line 78: completing tema 10 (MAX_TEMAS) redirects to index."""
+	def test_completar_tema_inexistente_devuelve_404(self):
 		profile = UserProfile.objects.get(usuario=self.user)
 		profile.ultimo_tema_desbloqueado = 10
 		profile.save()
 
 		self.client.login(username=self.user.username, password=self.password)
 		response = self.client.post(reverse('completar_tema', kwargs={'tema': 10}))
-		self.assertRedirects(response, reverse('index'))
+		self.assertEqual(response.status_code, 404)
 
 	def test_completar_tema_ya_completado_no_retrocede(self):
 		"""completar_tema must not lower ultimo_tema_desbloqueado."""

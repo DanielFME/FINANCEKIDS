@@ -412,3 +412,4 @@ WHERE username = 'demo_financekids';
 -- SELECT * FROM auditoria_respuestas ORDER BY id DESC;
 -- SELECT * FROM progreso_usuario WHERE usuario_id = (SELECT id FROM usuarios WHERE username = 'ana_demo') ORDER BY tema_id;
 -- SELECT * FROM auditoria_progreso ORDER BY id DESC;
+

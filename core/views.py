@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.http import Http404
 from django.views.decorators.http import require_http_methods, require_POST
 from core.forms import RegistroForm
 from game.models import UserProfile
@@ -59,12 +61,17 @@ def registro(request):
 
 @require_http_methods(['GET', 'POST'])
 def logout_view(request):
+    if request.method == 'GET':
+        return render(request, 'core/logout_confirm.html')
     logout(request)
     return redirect('login')
 
 
 @login_required
 def aprendizaje(request, tema):
+    if tema < 1 or tema > 3:
+        raise Http404('Tema no encontrado')
+
     tema_actual = _get_user_profile(request.user).ultimo_tema_desbloqueado
 
     if tema > tema_actual:
@@ -75,13 +82,24 @@ def aprendizaje(request, tema):
 @login_required
 @require_POST
 def completar_tema(request, tema):
+    respuestas_correctas = {
+        1: ('1', '1', '2'),
+        2: ('1', '1'),
+    }
+    if tema not in respuestas_correctas:
+        raise Http404('Tema no encontrado')
+
     profile = _get_user_profile(request.user)
     tema_actual = profile.ultimo_tema_desbloqueado
 
     # Solo avanzar si se completa exactamente el tema actual (evita saltar temas)
-    if tema == tema_actual:
-        profile.ultimo_tema_desbloqueado = tema + 1
-        profile.save(update_fields=['ultimo_tema_desbloqueado'])
+    respuestas = tuple(request.POST.get(f'respuesta_{indice}', '') for indice in range(1, len(respuestas_correctas[tema]) + 1))
+    if tema != tema_actual or respuestas != respuestas_correctas[tema]:
+        messages.error(request, 'Debes responder correctamente todas las preguntas antes de avanzar.')
+        return redirect('preguntas1' if tema == 1 else 'preguntas2')
+
+    profile.ultimo_tema_desbloqueado = tema + 1
+    profile.save(update_fields=['ultimo_tema_desbloqueado'])
 
     siguiente_tema = tema + 1
     MAX_TEMAS = 10

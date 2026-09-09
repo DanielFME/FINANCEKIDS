@@ -80,7 +80,9 @@ def get_env(name, default=None):
 #   Útil para encontrar bugs mientras programas.
 # - False (producción): Django oculta los errores al usuario final por seguridad.
 #   Siempre debe ser False cuando la app está publicada en internet.
-DEBUG = str_to_bool(get_env('DEBUG'), default=True)
+# default=False: si olvidas definir DEBUG en un servidor real, falla de forma segura.
+# Para desarrollo local, define DEBUG=True en tu archivo .env (ver .env.example).
+DEBUG = str_to_bool(get_env('DEBUG'), default=False)
 
 # SECRET_KEY: clave secreta usada por Django para proteger sesiones, formularios,
 # contraseñas y otras operaciones de seguridad.
@@ -110,6 +112,17 @@ csrf_trusted_origins_env = get_env('CSRF_TRUSTED_ORIGINS', '')
 CSRF_TRUSTED_ORIGINS = [
     origin.strip() for origin in csrf_trusted_origins_env.split(',') if origin.strip()
 ]
+
+# Railway inyecta automáticamente RAILWAY_PUBLIC_DOMAIN con el dominio público
+# asignado a la app (ej: "web-production-5da2e.up.railway.app"). Lo agregamos
+# aquí para no depender de configurarlo a mano cada vez que Railway lo cambie.
+railway_public_domain = get_env('RAILWAY_PUBLIC_DOMAIN')
+if railway_public_domain:
+    if railway_public_domain not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(railway_public_domain)
+    railway_origin = f'https://{railway_public_domain}'
+    if railway_origin not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS.append(railway_origin)
 
 
 # =============================================================================
@@ -218,27 +231,33 @@ if str_to_bool(get_env('USE_SQLITE'), default=False):
 
 elif get_env('DATABASE_URL'):
     # -----------------------------------------------------------------------
-    # OPCIÓN 2: PostgreSQL via DATABASE_URL (producción en Render)
+    # OPCIÓN 2: base de datos via DATABASE_URL (Render con Postgres, Railway con MySQL, etc.)
     # -----------------------------------------------------------------------
-    # PostgreSQL es una base de datos profesional que soporta muchos usuarios
-    # a la vez, es rápida y segura. Es la que usamos en Render.
-    #
-    # Render inyecta automáticamente la variable DATABASE_URL cuando conectas
-    # un servicio PostgreSQL a tu app web. Tiene este formato:
+    # Render/Railway inyectan automáticamente una URL de conexión cuando enlazas
+    # un servicio de base de datos a tu app web. Tiene este formato:
     # postgres://USUARIO:CONTRASEÑA@SERVIDOR:PUERTO/NOMBRE_BASE
+    # mysql://USUARIO:CONTRASEÑA@SERVIDOR:PUERTO/NOMBRE_BASE
+    #
+    # En Railway, para conectar tu app al servicio MySQL, defines la variable
+    # DATABASE_URL con el valor ${{ MySQL.MYSQL_PRIVATE_URL }} (referencia a la
+    # URL privada del servicio MySQL dentro de la red interna de Railway).
     #
     # dj_database_url.config() convierte esa URL al formato que entiende Django.
     #
     # conn_max_age=600: reutiliza conexiones abiertas durante 10 minutos.
     # Esto mejora el rendimiento porque abrir una nueva conexión tiene un costo.
     #
-    # ssl_require=not DEBUG: en producción (DEBUG=False) obliga a que la
-    # comunicación entre la app y la base de datos viaje encriptada por SSL.
+    # ssl_require solo aplica a Postgres (el parámetro que genera, "sslmode",
+    # no es válido para MySQL). En redes privadas (como Railway) tampoco hace
+    # falta forzar SSL, así que solo se activa para esquemas de Postgres.
+    database_url_value = get_env('DATABASE_URL')
+    is_postgres_url = database_url_value.startswith(('postgres://', 'postgresql://'))
+
     DATABASES = {
         'default': dj_database_url.config(
-            default=get_env('DATABASE_URL'),
+            default=database_url_value,
             conn_max_age=600,
-            ssl_require=not DEBUG,
+            ssl_require=is_postgres_url and not DEBUG,
         )
     }
 
@@ -342,7 +361,11 @@ STORAGES = {
         'BACKEND': 'django.core.files.storage.FileSystemStorage',
     },
     'staticfiles': {
-        'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+        'BACKEND': (
+            'whitenoise.storage.CompressedManifestStaticFilesStorage'
+            if not DEBUG else
+            'django.contrib.staticfiles.storage.StaticFilesStorage'
+        ),
     },
 }
 

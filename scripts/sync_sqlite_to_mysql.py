@@ -1,5 +1,15 @@
+import os
+import sys
 import sqlite3
 from datetime import datetime
+
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, PROJECT_ROOT)
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'financekids.settings')
+
+import django
+
+django.setup()
 
 from django.contrib.auth.models import User
 from django.db import transaction
@@ -18,7 +28,7 @@ def parse_datetime(value):
 
 
 def sync():
-    sqlite_conn = sqlite3.connect('db.sqlite3')
+    sqlite_conn = sqlite3.connect(os.path.join(PROJECT_ROOT, 'db.sqlite3'))
     sqlite_conn.row_factory = sqlite3.Row
     sqlite_cur = sqlite_conn.cursor()
 
@@ -75,7 +85,8 @@ def sync():
     sqlite_conn.close()
 
 
-sync()
-print('users=', User.objects.count())
-print('temas=', Tema.objects.count())
-print('profiles=', UserProfile.objects.count())
+if __name__ == '__main__':
+    sync()
+    print('users=', User.objects.count())
+    print('temas=', Tema.objects.count())
+    print('profiles=', UserProfile.objects.count())

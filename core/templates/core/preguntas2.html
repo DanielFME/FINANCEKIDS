@@ -168,6 +168,8 @@
                 </a>
                 <form method="POST" action="{% url 'completar_tema' tema=2 %}" id="form-completar" style="display:none;">
                     {% csrf_token %}
+                    <input type="hidden" name="respuesta_1" id="respuesta-1">
+                    <input type="hidden" name="respuesta_2" id="respuesta-2">
                     <button type="submit" class="btn-completar">
                         ✅ Completar Tema 2
                     </button>
@@ -199,6 +201,8 @@
         card.querySelectorAll('.opcion-btn').forEach(b => b.disabled = true);
 
         // Marcar botón seleccionado
+        const opciones = Array.from(card.querySelectorAll('.opcion-btn'));
+        document.getElementById(`respuesta-${numPregunta}`).value = opciones.indexOf(btn) + 1;
         if (esCorrecta) {
             btn.classList.add('correcta');
             card.classList.add('respondida-ok');
