@@ -1,0 +1,86 @@
+FINANCEKIDS - EXPLICACIÓN DEL PROYECTO INTEGRADOR
+
+Hola. En este archivo explico lo que se hizo en el proyecto para el primer
+avance.
+
+¿Qué se hizo?
+
+1. Documentación de arquitectura
+Se creó el archivo ARCHITECTURE.md, donde se explica cómo está organizada la
+aplicación.
+
+Ahí se muestra:
+
+- Quién usa la app
+- Qué hace la plataforma
+- Cómo se conecta con la base de datos
+
+También se explicó que la aplicación funciona con una arquitectura monolítica,
+o sea, todo corre en un mismo servidor, y que Django genera las vistas desde
+el servidor.
+
+2. Vistas responsivas
+Se mejoraron 3 páginas principales para que se adapten mejor a distintos
+tamaños de pantalla:
+
+- Login: se reorganizó el diseño para que se vea mejor en móvil y escritorio
+- Registro: se acomodaron mejor los pasos del formulario
+- Inicio o dashboard: ahora las tarjetas se organizan con grid y cambian según
+  el tamaño de pantalla
+
+Para esto se usaron CSS Grid, Flexbox y media queries.
+
+3. Validación en JavaScript
+También se agregó validación en los formularios antes de enviar la información
+al servidor.
+
+En el login se valida:
+- Que el email tenga un formato correcto
+- Que los campos no estén vacíos
+
+En el registro se valida:
+- Email correcto
+- Contraseña segura
+- Que las contraseñas coincidan
+- Fecha de nacimiento válida
+- Nombre del tutor
+- Email del tutor
+- Aceptación de términos
+
+Si hay un error, se muestra un mensaje para que el usuario lo pueda corregir.
+
+4. Seguridad
+Mientras se hacía la validación del email, se agregó una medida para evitar que
+alguien intente probar muchos correos seguidos para ver cuáles están registrados.
+
+Por eso se puso un límite de intentos en poco tiempo.
+
+Archivos que se hicieron o modificaron
+
+Nuevos:
+- ARCHITECTURE.md
+- core/static/js/validation.js
+
+Modificados:
+- core/static/css/styles.css
+- core/templates/core/login.html
+- core/templates/core/registro.html
+- core/templates/core/index.html
+- core/views.py
+- core/tests.py
+
+¿Cómo se prueba?
+1. Ejecutar migrations
+2. Levantar el servidor con python manage.py runserver
+3. Entrar a la página principal
+4. Probar el login y el registro
+
+Conclusión
+En resumen, el proyecto ahora tiene:
+
+- Mejor documentación
+- Mejor diseño responsive
+- Validaciones en JavaScript
+- Más orden y mejor estructura
+
+Con esto ya cumple con lo que se pidió para el avance del proyecto.
