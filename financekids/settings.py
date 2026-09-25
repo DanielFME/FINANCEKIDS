@@ -97,7 +97,7 @@ def build_default_database_config(env=None, debug=False, base_dir=None):
     if base_dir is None:
         base_dir = BASE_DIR
 
-    if str_to_bool(env_get(env, 'USE_SQLITE'), default=False):
+    if str_to_bool(env_get(env, 'USE_SQLITE')):
         return {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': base_dir / 'db.sqlite3',

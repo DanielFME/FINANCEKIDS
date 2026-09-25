@@ -408,112 +408,112 @@ class CustomFilterGetItemTests(TestCase):
 
 class RailwayDatabaseSettingsTests(SimpleTestCase):
 
-	def test_database_url_mysql_has_priority_over_railway_mysql_url(self):
-		database_url = 'mysql://db_user:' + 'db_pass@db.example.com:3308/db_from_database_url'
-		mysql_url = 'mysql://ignored:' + 'ignored@other-host:3306/other_db'
-		config = build_default_database_config(
-			env={
-				'DATABASE_URL': database_url,
-				'MYSQL_URL': mysql_url,
-			},
-			debug=False,
-		)
+    def test_database_url_mysql_has_priority_over_railway_mysql_url(self):
+        database_url = 'mysql://db_user:' + 'db_pass@db.example.com:3308/db_from_database_url'
+        mysql_url = 'mysql://ignored:' + 'ignored@other-host:3306/other_db'
+        config = build_default_database_config(
+            env={
+                'DATABASE_URL': database_url,
+                'MYSQL_URL': mysql_url,
+            },
+            debug=False,
+        )
 
-		self.assertEqual(config['ENGINE'], 'django.db.backends.mysql')
-		self.assertEqual(config['NAME'], 'db_from_database_url')
-		self.assertEqual(config['USER'], 'db_user')
-		self.assertEqual(config['PASSWORD'], 'db_pass')
-		self.assertEqual(config['HOST'], 'db.example.com')
-		self.assertEqual(str(config['PORT']), '3308')
+        self.assertEqual(config['ENGINE'], 'django.db.backends.mysql')
+        self.assertEqual(config['NAME'], 'db_from_database_url')
+        self.assertEqual(config['USER'], 'db_user')
+        self.assertEqual(config['PASSWORD'], 'db_pass')
+        self.assertEqual(config['HOST'], 'db.example.com')
+        self.assertEqual(str(config['PORT']), '3308')
 
-	def test_mysql_url_is_parsed_without_postgres_ssl_options(self):
-		mysql_url = (
-			'mysql://railway:' +
-			'secret@containers-us-west-12.railway.app:6543/railway_db'
-		)
-		config = parse_database_url(
-			mysql_url,
-			debug=False,
-		)
+    def test_mysql_url_is_parsed_without_postgres_ssl_options(self):
+        mysql_url = (
+            'mysql://railway:' +
+            'secret@containers-us-west-12.railway.app:6543/railway_db'
+        )
+        config = parse_database_url(
+            mysql_url,
+            debug=False,
+        )
 
-		self.assertEqual(config['ENGINE'], 'django.db.backends.mysql')
-		self.assertEqual(config['NAME'], 'railway_db')
-		self.assertEqual(config['USER'], 'railway')
-		self.assertEqual(config['PASSWORD'], 'secret')
-		self.assertEqual(config['HOST'], 'containers-us-west-12.railway.app')
-		self.assertEqual(str(config['PORT']), '6543')
-		self.assertNotIn('sslmode', config.get('OPTIONS', {}))
+        self.assertEqual(config['ENGINE'], 'django.db.backends.mysql')
+        self.assertEqual(config['NAME'], 'railway_db')
+        self.assertEqual(config['USER'], 'railway')
+        self.assertEqual(config['PASSWORD'], 'secret')
+        self.assertEqual(config['HOST'], 'containers-us-west-12.railway.app')
+        self.assertEqual(str(config['PORT']), '6543')
+        self.assertNotIn('sslmode', config.get('OPTIONS', {}))
 
-	def test_parse_database_url_ignores_unrelated_environment_variable(self):
-		mysql_url = 'mysql://railway:' + 'secret@db.example.com:3306/railway_db'
-		with patch.dict(
-			'os.environ',
-			{'FINANCEKIDS_INTERNAL_DATABASE_URL': 'mysql://wrong:' + 'wrong@other-host:3306/wrong_db'},
-			clear=False,
-		):
-			config = parse_database_url(mysql_url, debug=False)
+    def test_parse_database_url_ignores_unrelated_environment_variable(self):
+        mysql_url = 'mysql://railway:' + 'secret@db.example.com:3306/railway_db'
+        with patch.dict(
+            'os.environ',
+            {'FINANCEKIDS_INTERNAL_DATABASE_URL': 'mysql://wrong:' + 'wrong@other-host:3306/wrong_db'},
+            clear=False,
+        ):
+            config = parse_database_url(mysql_url, debug=False)
 
-		self.assertEqual(config['NAME'], 'railway_db')
-		self.assertEqual(config['USER'], 'railway')
-		self.assertEqual(config['PASSWORD'], 'secret')
-		self.assertEqual(config['HOST'], 'db.example.com')
+        self.assertEqual(config['NAME'], 'railway_db')
+        self.assertEqual(config['USER'], 'railway')
+        self.assertEqual(config['PASSWORD'], 'secret')
+        self.assertEqual(config['HOST'], 'db.example.com')
 
-	def test_build_default_database_config_uses_mysql_url_branch(self):
-		mysql_url = (
-			'mysql://railway:' +
-			'secret@containers-us-west-12.railway.app:6543/railway_db'
-		)
-		config = build_default_database_config(
-			env={'MYSQL_URL': mysql_url},
-			debug=False,
-		)
+    def test_build_default_database_config_uses_mysql_url_branch(self):
+        mysql_url = (
+            'mysql://railway:' +
+            'secret@containers-us-west-12.railway.app:6543/railway_db'
+        )
+        config = build_default_database_config(
+            env={'MYSQL_URL': mysql_url},
+            debug=False,
+        )
 
-		self.assertEqual(config['ENGINE'], 'django.db.backends.mysql')
-		self.assertEqual(config['NAME'], 'railway_db')
-		self.assertEqual(config['USER'], 'railway')
-		self.assertEqual(config['PASSWORD'], 'secret')
-		self.assertEqual(config['HOST'], 'containers-us-west-12.railway.app')
-		self.assertEqual(str(config['PORT']), '6543')
+        self.assertEqual(config['ENGINE'], 'django.db.backends.mysql')
+        self.assertEqual(config['NAME'], 'railway_db')
+        self.assertEqual(config['USER'], 'railway')
+        self.assertEqual(config['PASSWORD'], 'secret')
+        self.assertEqual(config['HOST'], 'containers-us-west-12.railway.app')
+        self.assertEqual(str(config['PORT']), '6543')
 
-	def test_mysql_variables_override_mysql_url_components(self):
-		mysql_url = 'mysql://old_user:' + 'old_pass@old-host:3306/old_db'
-		config = build_default_database_config(
-			env={
-				'MYSQL_URL': mysql_url,
-				'MYSQLHOST': 'mysql.railway.internal',
-				'MYSQLPORT': '3307',
-				'MYSQLUSER': 'new_user',
-				'MYSQLPASSWORD': 'new_pass',
-				'MYSQLDATABASE': 'new_db',
-			},
-			debug=False,
-		)
+    def test_mysql_variables_override_mysql_url_components(self):
+        mysql_url = 'mysql://old_user:' + 'old_pass@old-host:3306/old_db'
+        config = build_default_database_config(
+            env={
+                'MYSQL_URL': mysql_url,
+                'MYSQLHOST': 'mysql.railway.internal',
+                'MYSQLPORT': '3307',
+                'MYSQLUSER': 'new_user',
+                'MYSQLPASSWORD': 'new_pass',
+                'MYSQLDATABASE': 'new_db',
+            },
+            debug=False,
+        )
 
-		self.assertEqual(config['ENGINE'], 'django.db.backends.mysql')
-		self.assertEqual(config['NAME'], 'new_db')
-		self.assertEqual(config['USER'], 'new_user')
-		self.assertEqual(config['PASSWORD'], 'new_pass')
-		self.assertEqual(config['HOST'], 'mysql.railway.internal')
-		self.assertEqual(config['PORT'], '3307')
+        self.assertEqual(config['ENGINE'], 'django.db.backends.mysql')
+        self.assertEqual(config['NAME'], 'new_db')
+        self.assertEqual(config['USER'], 'new_user')
+        self.assertEqual(config['PASSWORD'], 'new_pass')
+        self.assertEqual(config['HOST'], 'mysql.railway.internal')
+        self.assertEqual(config['PORT'], '3307')
 
-	def test_railway_mysql_variables_build_mysql_config(self):
-		config = build_default_database_config(
-			env={
-				'MYSQLHOST': 'mysql.railway.internal',
-				'MYSQLPORT': '3306',
-				'MYSQLUSER': 'railway',
-				'MYSQLPASSWORD': 'pw',
-				'MYSQLDATABASE': 'financekids_prod',
-			},
-			debug=False,
-		)
+    def test_railway_mysql_variables_build_mysql_config(self):
+        config = build_default_database_config(
+            env={
+                'MYSQLHOST': 'mysql.railway.internal',
+                'MYSQLPORT': '3306',
+                'MYSQLUSER': 'railway',
+                'MYSQLPASSWORD': 'pw',
+                'MYSQLDATABASE': 'financekids_prod',
+            },
+            debug=False,
+        )
 
-		self.assertEqual(config['ENGINE'], 'django.db.backends.mysql')
-		self.assertEqual(config['NAME'], 'financekids_prod')
-		self.assertEqual(config['USER'], 'railway')
-		self.assertEqual(config['PASSWORD'], 'pw')
-		self.assertEqual(config['HOST'], 'mysql.railway.internal')
-		self.assertEqual(config['PORT'], '3306')
+        self.assertEqual(config['ENGINE'], 'django.db.backends.mysql')
+        self.assertEqual(config['NAME'], 'financekids_prod')
+        self.assertEqual(config['USER'], 'railway')
+        self.assertEqual(config['PASSWORD'], 'pw')
+        self.assertEqual(config['HOST'], 'mysql.railway.internal')
+        self.assertEqual(config['PORT'], '3306')
 
 
 # ---------------------------------------------------------------------------
