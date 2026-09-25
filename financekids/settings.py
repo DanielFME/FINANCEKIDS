@@ -15,8 +15,8 @@ def str_to_bool(value, default=False):
     return value.strip().lower() in ('1', 'true', 'yes', 'on')
 
 
-def get_env(name, default=None):
-    value = os.getenv(name)
+def env_get(env, name, default=None):
+    value = env.get(name)
     if value is None:
         return default
 
@@ -25,6 +25,89 @@ def get_env(name, default=None):
         value = value[1:-1].strip()
 
     return value if value != '' else default
+
+
+def get_env(name, default=None):
+    return env_get(os.environ, name, default)
+
+
+def is_postgres_url(database_url):
+    return database_url.startswith(('postgres://', 'postgresql://'))
+
+
+def parse_database_url(database_url, debug=False):
+    return dj_database_url.parse(
+        database_url,
+        conn_max_age=600,
+        ssl_require=is_postgres_url(database_url) and not debug,
+    )
+
+
+def build_mysql_database_config(env):
+    mysql_url = env_get(env, 'MYSQL_URL') or env_get(env, 'MYSQL_ADDON_URI', '')
+    parsed_url = urlparse(mysql_url) if mysql_url else None
+
+    db_name = (
+        env_get(env, 'MYSQLDATABASE')
+        or env_get(env, 'MYSQL_ADDON_DB')
+        or env_get(env, 'DB_NAME')
+    )
+    db_user = (
+        env_get(env, 'MYSQLUSER')
+        or env_get(env, 'MYSQL_ADDON_USER')
+        or env_get(env, 'DB_USER')
+    )
+    db_password = (
+        env_get(env, 'MYSQLPASSWORD')
+        or env_get(env, 'MYSQL_ADDON_PASSWORD')
+        or env_get(env, 'DB_PASSWORD')
+    )
+    db_host = (
+        env_get(env, 'MYSQLHOST')
+        or env_get(env, 'MYSQL_ADDON_HOST')
+        or env_get(env, 'DB_HOST')
+    )
+    db_port = (
+        env_get(env, 'MYSQLPORT')
+        or env_get(env, 'MYSQL_ADDON_PORT')
+        or env_get(env, 'DB_PORT')
+    )
+
+    if parsed_url:
+        db_name = db_name or (parsed_url.path.lstrip('/') if parsed_url.path else None)
+        db_user = db_user or parsed_url.username
+        db_password = db_password or parsed_url.password
+        db_host = db_host or parsed_url.hostname
+        db_port = db_port or (str(parsed_url.port) if parsed_url.port else None)
+
+    return {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': db_name or 'financekids',
+        'USER': db_user or 'root',
+        'PASSWORD': db_password or '',
+        'HOST': db_host or 'localhost',
+        'PORT': db_port or '3306',
+    }
+
+
+def build_default_database_config(env=None, debug=False, base_dir=BASE_DIR):
+    env = env or os.environ
+
+    if str_to_bool(env_get(env, 'USE_SQLITE'), default=False):
+        return {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': base_dir / 'db.sqlite3',
+        }
+
+    database_url = env_get(env, 'DATABASE_URL')
+    if database_url:
+        return parse_database_url(database_url, debug=debug)
+
+    mysql_url = env_get(env, 'MYSQL_URL')
+    if mysql_url:
+        return parse_database_url(mysql_url, debug=debug)
+
+    return build_mysql_database_config(env)
 
 
 # default=False: si olvidas definir DEBUG en producción, falla de forma segura.
@@ -98,55 +181,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'financekids.wsgi.application'
 
-if str_to_bool(get_env('USE_SQLITE'), default=False):
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
-
-elif get_env('DATABASE_URL'):
-    # DATABASE_URL soporta Postgres (Render) y MySQL (Railway: ${{ MySQL.MYSQL_PRIVATE_URL }}).
-    # ssl_require solo aplica a Postgres; MySQL usa una opción distinta ("sslmode" no es válida ahí).
-    database_url_value = get_env('DATABASE_URL')
-    is_postgres_url = database_url_value.startswith(('postgres://', 'postgresql://'))
-
-    DATABASES = {
-        'default': dj_database_url.config(
-            default=database_url_value,
-            conn_max_age=600,
-            ssl_require=is_postgres_url and not DEBUG,
-        )
-    }
-
-else:
-    mysql_addon_uri = get_env('MYSQL_ADDON_URI', '')
-    parsed_uri = urlparse(mysql_addon_uri) if mysql_addon_uri else None
-
-    db_name = get_env('MYSQL_ADDON_DB') or get_env('DB_NAME')
-    db_user = get_env('MYSQL_ADDON_USER') or get_env('DB_USER')
-    db_password = get_env('MYSQL_ADDON_PASSWORD') or get_env('DB_PASSWORD')
-    db_host = get_env('MYSQL_ADDON_HOST') or get_env('DB_HOST')
-    db_port = get_env('MYSQL_ADDON_PORT') or get_env('DB_PORT')
-
-    if parsed_uri:
-        db_name = db_name or (parsed_uri.path.lstrip('/') if parsed_uri.path else None)
-        db_user = db_user or parsed_uri.username
-        db_password = db_password or parsed_uri.password
-        db_host = db_host or parsed_uri.hostname
-        db_port = db_port or (str(parsed_uri.port) if parsed_uri.port else None)
-
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': db_name or 'financekids',
-            'USER': db_user or 'root',
-            'PASSWORD': db_password or '',
-            'HOST': db_host or 'localhost',
-            'PORT': db_port or '3306',
-        }
-    }
+DATABASES = {
+    'default': build_default_database_config(debug=DEBUG)
+}
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},

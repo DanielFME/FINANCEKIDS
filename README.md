@@ -7,7 +7,7 @@ Aplicacion web educativa construida con Django para aprendizaje financiero infan
 - Django 5
 - PostgreSQL en produccion (Render)
 - SQLite en desarrollo local rapido
-- MySQL como compatibilidad/fallback
+- MySQL como compatibilidad/fallback y despliegue en Railway
 - GitHub Actions para CI
 
 ## Estructura base
@@ -93,14 +93,16 @@ No hay una sola base fija para todos los entornos: el motor se elige por variabl
 Orden de prioridad actual:
 
 1. `USE_SQLITE=True`
-2. `DATABASE_URL` (PostgreSQL, recomendado en Render)
-3. Variables `MYSQL_ADDON_*`
-4. Variables `DB_*` (MySQL manual)
+2. `DATABASE_URL` (PostgreSQL en Render o MySQL en Railway si la asignas manualmente)
+3. `MYSQL_URL`
+4. Variables `MYSQLHOST` / `MYSQLPORT` / `MYSQLUSER` / `MYSQLPASSWORD` / `MYSQLDATABASE`
+5. Variables `MYSQL_ADDON_*`
+6. Variables `DB_*` (MySQL manual)
 
 Interpretacion practica:
 - Si `USE_SQLITE=True`, se ignora todo lo demas y se usa `db.sqlite3` local.
-- Si `USE_SQLITE=False` y existe `DATABASE_URL`, se conecta a PostgreSQL.
-- Si no existe `DATABASE_URL`, intenta MySQL con `MYSQL_ADDON_*` o `DB_*`.
+- Si `USE_SQLITE=False` y existe `DATABASE_URL`, se conecta usando esa URL (PostgreSQL o MySQL).
+- Si no existe `DATABASE_URL`, intenta MySQL con `MYSQL_URL`, `MYSQL*`, `MYSQL_ADDON_*` o `DB_*`.
 
 ### Donde esta alojada la base de datos en produccion
 En Render, la base de datos esta en un servicio separado de tipo PostgreSQL
@@ -125,12 +127,109 @@ En el servicio web:
 ### Detalles de conexion usados por Django
 Cuando usa `DATABASE_URL`, se aplica:
 - `conn_max_age=600`: reutiliza conexiones (menos overhead).
-- `ssl_require=not DEBUG`: en produccion fuerza SSL hacia la base.
+- `ssl_require=not DEBUG`: en produccion fuerza SSL solo para URLs PostgreSQL.
 
 ### Que base se usa en cada escenario
 - Laptop local (setup rapido): SQLite (`USE_SQLITE=True`).
 - Render produccion: PostgreSQL (`USE_SQLITE=False` + `DATABASE_URL`).
+- Railway produccion: MySQL (`DATABASE_URL=${{MySQL.MYSQL_URL}}`, `MYSQL_URL` o variables `MYSQL*`).
 - Entorno legado/especial: MySQL (`MYSQL_ADDON_*` o `DB_*`).
+
+## Despliegue en Railway (paso a paso)
+
+Configuracion validada para este proyecto Django:
+- WSGI: `financekids.wsgi:application`
+- Build Railway: instala `requirements.txt` y ejecuta `collectstatic`
+- Start Railway: ejecuta `migrate` y luego `gunicorn` en `0.0.0.0:$PORT`
+
+### 1) Conectar el repositorio
+1. En Railway, crea un proyecto nuevo.
+2. Elige **Deploy from GitHub repo**.
+3. Selecciona `DanielFME/FINANCEKIDS`.
+
+### 2) Agregar MySQL administrado
+1. En el proyecto, agrega un servicio **MySQL**.
+2. Railway creara variables como:
+   - `MYSQL_URL`
+   - `MYSQLHOST`
+   - `MYSQLPORT`
+   - `MYSQLUSER`
+   - `MYSQLPASSWORD`
+   - `MYSQLDATABASE`
+
+### 3) Configurar variables del servicio web
+En el servicio Django define al menos:
+- `DEBUG=False`
+- `SECRET_KEY=<clave larga y aleatoria>`
+- `USE_SQLITE=False`
+
+Recomendado:
+- `DATABASE_URL=${{MySQL.MYSQL_URL}}`
+
+Alternativa soportada si prefieres no mapear `DATABASE_URL`:
+- dejar `MYSQL_URL` tal como lo expone Railway, o
+- usar directamente `MYSQLHOST`, `MYSQLPORT`, `MYSQLUSER`, `MYSQLPASSWORD` y `MYSQLDATABASE`
+
+> La aplicacion da prioridad a `DATABASE_URL`. Si no existe, usa `MYSQL_URL`. Si tampoco existe, usa `MYSQLHOST/MYSQLPORT/MYSQLUSER/MYSQLPASSWORD/MYSQLDATABASE`.
+
+### 4) Hacer deploy
+1. Guarda las variables.
+2. Lanza el deploy.
+3. Railway usara `railway.toml`:
+   - build: `pip install -r requirements.txt && python manage.py collectstatic --noinput`
+   - start: `python manage.py migrate --noinput && gunicorn financekids.wsgi:application --bind 0.0.0.0:$PORT --workers 2`
+
+> En este repositorio se mantiene `migrate` en el comando de arranque para no introducir una estrategia de pre-deploy no validada aqui. Eso evita romper el flujo actual y mantiene compatibilidad con el despliegue existente.
+
+### 5) Generar dominio publico
+1. En Railway, abre el servicio web.
+2. En **Networking**, genera un **Public Domain**.
+3. Railway inyecta `RAILWAY_PUBLIC_DOMAIN` automaticamente. El proyecto ya lo agrega a `ALLOWED_HOSTS` y `CSRF_TRUSTED_ORIGINS`.
+
+Si necesitas hosts/origenes extra, define:
+- `ALLOWED_HOSTS=tu-app.up.railway.app,otro-dominio.com`
+- `CSRF_TRUSTED_ORIGINS=https://tu-app.up.railway.app,https://otro-dominio.com`
+
+## Verificacion local antes de subir
+
+Con tu virtualenv activo:
+
+```bash
+pip install -r requirements.txt
+python manage.py test core.tests.RailwayDatabaseSettingsTests -v 2
+DEBUG=False SECRET_KEY="dev-only-strong-key" USE_SQLITE=True python manage.py check --deploy
+DEBUG=False SECRET_KEY="dev-only-strong-key" USE_SQLITE=True python manage.py collectstatic --noinput
+```
+
+En PowerShell:
+
+```powershell
+$env:DEBUG="False"
+$env:SECRET_KEY="dev-only-strong-key"
+$env:USE_SQLITE="True"
+python manage.py check --deploy
+python manage.py collectstatic --noinput
+```
+
+## Troubleshooting Railway
+
+### Ver logs
+- Abre el servicio en Railway y revisa la pestaña **Deployments** / **Logs**.
+- Si `gunicorn` no inicia, confirma que Railway este usando `railway.toml`.
+
+### Migraciones
+- Si el deploy falla en `migrate`, revisa que `USE_SQLITE=False`.
+- Confirma que `DATABASE_URL=${{MySQL.MYSQL_URL}}` apunte al servicio MySQL correcto.
+- Si no usas `DATABASE_URL`, verifica que `MYSQLHOST`, `MYSQLPORT`, `MYSQLUSER`, `MYSQLPASSWORD` y `MYSQLDATABASE` existan en el servicio web.
+
+### Archivos estaticos
+- `WhiteNoise` ya esta activo cuando `DEBUG=False`.
+- Si faltan estaticos, revisa que el build haya ejecutado `python manage.py collectstatic --noinput`.
+
+### Conexion a base de datos
+- Railway MySQL funciona por red privada; no uses `localhost`.
+- Usa `DATABASE_URL=${{MySQL.MYSQL_URL}}` o las variables `MYSQL*` inyectadas por Railway.
+- Si aparece error de autenticacion o host, vuelve a vincular/revisar la referencia a las variables del servicio MySQL.
 
 ## Buenas practicas
 - No subir secretos (`.env` ya esta ignorado).
