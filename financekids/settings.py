@@ -35,8 +35,9 @@ def is_postgres_url(database_url):
 
 
 def parse_database_url(database_url, debug=False):
-    return dj_database_url.parse(
-        database_url,
+    return dj_database_url.config(
+        env='FINANCEKIDS_INTERNAL_DATABASE_URL',
+        default=database_url,
         conn_max_age=600,
         ssl_require=is_postgres_url(database_url) and not debug,
     )
