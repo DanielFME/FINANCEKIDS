@@ -132,7 +132,7 @@ Cuando usa `DATABASE_URL`, se aplica:
 ### Que base se usa en cada escenario
 - Laptop local (setup rapido): SQLite (`USE_SQLITE=True`).
 - Render produccion: PostgreSQL (`USE_SQLITE=False` + `DATABASE_URL`).
-- Railway produccion: MySQL (`DATABASE_URL=${{MySQL.MYSQL_URL}}`, `MYSQL_URL` o variables `MYSQL*`).
+- Railway produccion: MySQL (`DATABASE_URL` apuntando al valor de `MYSQL_URL`, `MYSQL_URL` directo o variables `MYSQL*`).
 - Entorno legado/especial: MySQL (`MYSQL_ADDON_*` o `DB_*`).
 
 ## Despliegue en Railway (paso a paso)
@@ -164,7 +164,7 @@ En el servicio Django define al menos:
 - `USE_SQLITE=False`
 
 Recomendado:
-- `DATABASE_URL=${{MySQL.MYSQL_URL}}`
+- `DATABASE_URL` con el mismo valor que Railway expone como `MYSQL_URL` en el servicio MySQL (usa el selector de referencias/variables de Railway para enlazarlo)
 
 Alternativa soportada si prefieres no mapear `DATABASE_URL`:
 - dejar `MYSQL_URL` tal como lo expone Railway, o
@@ -219,7 +219,7 @@ python manage.py collectstatic --noinput
 
 ### Migraciones
 - Si el deploy falla en `migrate`, revisa que `USE_SQLITE=False`.
-- Confirma que `DATABASE_URL=${{MySQL.MYSQL_URL}}` apunte al servicio MySQL correcto.
+- Confirma que `DATABASE_URL` apunte al mismo valor de `MYSQL_URL` del servicio MySQL correcto.
 - Si no usas `DATABASE_URL`, verifica que `MYSQLHOST`, `MYSQLPORT`, `MYSQLUSER`, `MYSQLPASSWORD` y `MYSQLDATABASE` existan en el servicio web.
 
 ### Archivos estaticos
@@ -228,7 +228,7 @@ python manage.py collectstatic --noinput
 
 ### Conexion a base de datos
 - Railway MySQL funciona por red privada; no uses `localhost`.
-- Usa `DATABASE_URL=${{MySQL.MYSQL_URL}}` o las variables `MYSQL*` inyectadas por Railway.
+- Usa `DATABASE_URL` enlazado al valor de `MYSQL_URL` o las variables `MYSQL*` inyectadas por Railway.
 - Si aparece error de autenticacion o host, vuelve a vincular/revisar la referencia a las variables del servicio MySQL.
 
 ## Buenas practicas
