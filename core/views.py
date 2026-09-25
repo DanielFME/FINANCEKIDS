@@ -23,27 +23,22 @@ def _get_user_profile(user):
 
 
 class FinanceKidsPasswordResetView(auth_views.PasswordResetView):
-    def _get_email_options(self):
-        options = {
-            'use_https': self.request.is_secure(),
-            'token_generator': self.token_generator,
-            'from_email': self.from_email,
-            'email_template_name': self.email_template_name,
-            'subject_template_name': self.subject_template_name,
-            'request': self.request,
-            'html_email_template_name': self.html_email_template_name,
-            'extra_email_context': self.extra_email_context,
-        }
+    def get_extra_email_context(self):
+        extra_email_context = dict(self.extra_email_context or {})
         public_base_url = getattr(settings, 'PUBLIC_BASE_URL', '')
         if public_base_url:
             parsed = urlparse(public_base_url)
-            options['domain_override'] = parsed.netloc
-            options['use_https'] = parsed.scheme == 'https'
-        return options
+            extra_email_context.update({
+                'domain': parsed.netloc,
+                'site_name': parsed.netloc,
+                'protocol': parsed.scheme,
+            })
+        return extra_email_context
 
     def form_valid(self, form):
         try:
-            form.save(**self._get_email_options())
+            self.extra_email_context = self.get_extra_email_context()
+            return super().form_valid(form)
         except Exception as exc:
             logger.warning(
                 'Password reset email delivery failed for a submitted request: %s',

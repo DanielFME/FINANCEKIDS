@@ -82,7 +82,7 @@ Para probar el flujo de recuperacion sin usar correos reales:
 
 Notas de seguridad:
 - No subas `.env` ni credenciales SMTP al repositorio.
-- Si compartiste credenciales en una captura de pantalla, tratalas como comprometidas y rotalas/revocalas despues de implementar el cambio.
+- Si compartiste credenciales en una captura de pantalla, tratalas como comprometidas y rotalas/cancelalas despues de implementar el cambio.
 - `PUBLIC_BASE_URL` debe apuntar al dominio publico que el usuario usara para abrir el enlace de recuperacion.
 
 ## Trabajo en equipo
