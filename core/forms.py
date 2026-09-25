@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from django.core.mail import EmailMultiAlternatives
 from django.core.exceptions import ValidationError
+from django.core.exceptions import ImproperlyConfigured
 from django.template import loader
 from django.utils import timezone
 from smtplib import SMTPException
@@ -48,7 +49,7 @@ class FinanceKidsPasswordResetForm(auth_forms.PasswordResetForm):
             email_message.attach_alternative(html_email, 'text/html')
         try:
             email_message.send()
-        except (SMTPException, OSError) as exc:
+        except (ImproperlyConfigured, SMTPException, OSError) as exc:
             raise PasswordResetEmailDeliveryError from exc
 
 

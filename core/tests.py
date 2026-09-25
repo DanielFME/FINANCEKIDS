@@ -2,6 +2,7 @@ from unittest.mock import patch
 from smtplib import SMTPException
 
 from django.core import mail
+from django.core.exceptions import ImproperlyConfigured
 from django.db import connection
 from django.contrib.auth.tokens import default_token_generator
 from django.test import TestCase, RequestFactory
@@ -183,6 +184,14 @@ class AuthAndProgressFlowTests(TestCase):
 
 	@patch('core.forms.EmailMultiAlternatives.send', side_effect=SMTPException('SMTP fail'))
 	def test_password_reset_no_revela_existencia_si_el_envio_falla(self, mock_send):
+		response = self.client.post(
+			reverse('password_reset'),
+			data={'email': self.user.email},
+		)
+		self.assertRedirects(response, reverse('password_reset_done'))
+
+	@patch('core.forms.EmailMultiAlternatives.send', side_effect=ImproperlyConfigured('Mail backend fail'))
+	def test_password_reset_no_revela_existencia_si_backend_esta_mal_configurado(self, mock_send):
 		response = self.client.post(
 			reverse('password_reset'),
 			data={'email': self.user.email},
