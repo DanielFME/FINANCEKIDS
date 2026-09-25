@@ -164,14 +164,14 @@ En el servicio Django define al menos:
 - `SECRET_KEY=<clave larga y aleatoria>`
 - `USE_SQLITE=False`
 
-Recomendado:
+Opcional pero recomendado:
 - `DATABASE_URL` con el mismo valor que Railway expone como `MYSQL_URL` en el servicio MySQL (usa el selector de referencias/variables de Railway para enlazarlo)
 
 Alternativa soportada si prefieres no mapear `DATABASE_URL`:
 - dejar `MYSQL_URL` tal como lo expone Railway, o
 - usar directamente `MYSQLHOST`, `MYSQLPORT`, `MYSQLUSER`, `MYSQLPASSWORD` y `MYSQLDATABASE`
 
-> La aplicacion da prioridad a `DATABASE_URL`. Si no existe, resuelve MySQL usando `MYSQL_URL`, luego completa o sobreescribe con `MYSQLHOST/MYSQLPORT/MYSQLUSER/MYSQLPASSWORD/MYSQLDATABASE`, y conserva como fallback `MYSQL_ADDON_URI`, `MYSQL_ADDON_*` y `DB_*`.
+> La aplicacion da prioridad a `DATABASE_URL`, pero en Railway no es obligatorio definirlo. Si no existe, resuelve MySQL usando `MYSQL_URL`, luego completa o sobreescribe con `MYSQLHOST/MYSQLPORT/MYSQLUSER/MYSQLPASSWORD/MYSQLDATABASE`, y conserva como fallback `MYSQL_ADDON_URI`, `MYSQL_ADDON_*` y `DB_*`.
 
 ### 4) Hacer deploy
 1. Guarda las variables.
