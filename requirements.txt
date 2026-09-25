@@ -15,3 +15,4 @@ resend==2.47.0
 python-dotenv==1.2.1
 dj-database-url==3.1.2
 whitenoise==6.9.0
+gunicorn==23.0.0
