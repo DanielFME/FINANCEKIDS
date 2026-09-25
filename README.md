@@ -171,7 +171,7 @@ Alternativa soportada si prefieres no mapear `DATABASE_URL`:
 - dejar `MYSQL_URL` tal como lo expone Railway, o
 - usar directamente `MYSQLHOST`, `MYSQLPORT`, `MYSQLUSER`, `MYSQLPASSWORD` y `MYSQLDATABASE`
 
-> La aplicacion da prioridad a `DATABASE_URL`. Si no existe, usa `MYSQL_URL`. Si tampoco existe, usa `MYSQLHOST/MYSQLPORT/MYSQLUSER/MYSQLPASSWORD/MYSQLDATABASE`.
+> La aplicacion da prioridad a `DATABASE_URL`. Si no existe, resuelve MySQL usando `MYSQL_URL`, luego completa o sobreescribe con `MYSQLHOST/MYSQLPORT/MYSQLUSER/MYSQLPASSWORD/MYSQLDATABASE`, y conserva como fallback `MYSQL_ADDON_URI`, `MYSQL_ADDON_*` y `DB_*`.
 
 ### 4) Hacer deploy
 1. Guarda las variables.

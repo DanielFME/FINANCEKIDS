@@ -91,8 +91,9 @@ def build_mysql_database_config(env, debug=False):
     return config
 
 
-def build_default_database_config(env=None, debug=False, base_dir=BASE_DIR):
+def build_default_database_config(env=None, debug=False, base_dir=None):
     env = env or os.environ
+    base_dir = base_dir or BASE_DIR
 
     if str_to_bool(env_get(env, 'USE_SQLITE'), default=False):
         return {
