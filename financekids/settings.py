@@ -201,10 +201,26 @@ EMAIL_BACKEND = get_env('EMAIL_BACKEND', 'django.core.mail.backends.console.Emai
 EMAIL_HOST = get_env('EMAIL_HOST', 'smtp.gmail.com')
 EMAIL_PORT = int(get_env('EMAIL_PORT', '587'))
 EMAIL_USE_TLS = str_to_bool(get_env('EMAIL_USE_TLS', 'true'))
+EMAIL_USE_SSL = str_to_bool(get_env('EMAIL_USE_SSL'), default=False)
 EMAIL_HOST_USER = get_env('EMAIL_HOST_USER', '')
 EMAIL_HOST_PASSWORD = get_env('EMAIL_HOST_PASSWORD', '')
+EMAIL_TIMEOUT = int(get_env('EMAIL_TIMEOUT', '10'))
 DEFAULT_FROM_EMAIL = get_env('DEFAULT_FROM_EMAIL', 'no-reply@financekids.local')
+PASSWORD_RESET_TIMEOUT = int(get_env('PASSWORD_RESET_TIMEOUT', '3600'))
+
+PUBLIC_BASE_URL = get_env('PUBLIC_BASE_URL')
+if not PUBLIC_BASE_URL and railway_public_domain:
+    PUBLIC_BASE_URL = f'https://{railway_public_domain}'
+if PUBLIC_BASE_URL:
+    parsed_public_base_url = urlparse(PUBLIC_BASE_URL)
+    if parsed_public_base_url.scheme not in ('http', 'https') or not parsed_public_base_url.netloc:
+        raise ValueError('PUBLIC_BASE_URL debe incluir un esquema http(s) y un host valido.')
+    PUBLIC_BASE_URL = PUBLIC_BASE_URL.rstrip('/')
+
+if EMAIL_USE_TLS and EMAIL_USE_SSL:
+    raise ValueError('EMAIL_USE_TLS y EMAIL_USE_SSL no pueden estar habilitados al mismo tiempo.')
+if PASSWORD_RESET_TIMEOUT <= 0:
+    raise ValueError('PASSWORD_RESET_TIMEOUT debe ser un entero positivo.')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 

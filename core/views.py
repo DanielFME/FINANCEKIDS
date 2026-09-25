@@ -1,3 +1,6 @@
+import logging
+from urllib.parse import urlparse
+
 from django.conf import settings
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect
@@ -8,8 +11,10 @@ from django.contrib import messages
 from django.http import Http404
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods, require_POST
-from core.forms import RegistroForm
+from core.forms import PasswordResetEmailDeliveryError, RegistroForm
 from game.models import UserProfile
+
+logger = logging.getLogger(__name__)
 
 
 def _get_user_profile(user):
@@ -18,15 +23,31 @@ def _get_user_profile(user):
 
 
 class FinanceKidsPasswordResetView(auth_views.PasswordResetView):
+    def get_extra_email_context(self):
+        extra_email_context = dict(self.extra_email_context or {})
+        public_base_url = getattr(settings, 'PUBLIC_BASE_URL', '')
+        if public_base_url:
+            parsed = urlparse(public_base_url)
+            extra_email_context.update({
+                'domain': parsed.netloc,
+                'site_name': parsed.netloc,
+                'protocol': parsed.scheme,
+            })
+        return extra_email_context
+
     def form_valid(self, form):
+        original_extra_email_context = self.extra_email_context
+        self.extra_email_context = self.get_extra_email_context()
         try:
             return super().form_valid(form)
-        except Exception:
-            messages.error(
-                self.request,
-                'No se pudo enviar el correo de recuperación en este momento. Verifica la configuración del correo o intenta nuevamente.',
+        except PasswordResetEmailDeliveryError as exc:
+            logger.warning(
+                'Password reset email delivery failed for a submitted request: %s',
+                exc.__cause__.__class__.__name__ if exc.__cause__ else exc.__class__.__name__,
             )
-            return self.render_to_response(self.get_context_data(form=form))
+            return redirect(self.get_success_url())
+        finally:
+            self.extra_email_context = original_extra_email_context
 
 
 @require_http_methods(['GET', 'POST'])

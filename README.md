@@ -62,6 +62,29 @@ Admin: `http://127.0.0.1:8000/admin/`
 ## Configuracion de entorno
 Usa `.env.example` como plantilla.
 
+### Recuperacion de contrasena por correo (Mailtrap)
+Para probar el flujo de recuperacion sin usar correos reales:
+
+1. Copia `.env.example` a `.env`.
+2. Configura el backend SMTP y completa las variables con tus credenciales vigentes de Mailtrap Sandbox:
+	- `EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend`
+	- `EMAIL_HOST=sandbox.smtp.mailtrap.io`
+	- `EMAIL_PORT=587`
+	- `EMAIL_USE_TLS=True`
+	- `EMAIL_USE_SSL=False`
+	- `EMAIL_HOST_USER=<usuario SMTP>`
+	- `EMAIL_HOST_PASSWORD=<password SMTP>`
+	- `DEFAULT_FROM_EMAIL=<remitente>`
+	- `PUBLIC_BASE_URL=http://127.0.0.1:8000` en local, o la URL publica real en despliegue
+	- `PASSWORD_RESET_TIMEOUT=3600` para controlar la expiracion del enlace
+3. Ejecuta `python manage.py runserver`.
+4. Abre `http://127.0.0.1:8000/password_reset/`, solicita el enlace y revisa la bandeja de Mailtrap.
+
+Notas de seguridad:
+- No subas `.env` ni credenciales SMTP al repositorio.
+- Si compartiste credenciales en una captura de pantalla, tratalas como comprometidas y rotalas/cancelalas despues de implementar el cambio.
+- `PUBLIC_BASE_URL` debe apuntar al dominio publico que el usuario usara para abrir el enlace de recuperacion.
+
 ## Trabajo en equipo
 Consulta `CONTRIBUTING.md` para flujo de ramas y checklist de PR.
 
