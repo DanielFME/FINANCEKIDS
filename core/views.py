@@ -1,4 +1,5 @@
 import logging
+from smtplib import SMTPException
 from urllib.parse import urlparse
 
 from django.conf import settings
@@ -36,15 +37,18 @@ class FinanceKidsPasswordResetView(auth_views.PasswordResetView):
         return extra_email_context
 
     def form_valid(self, form):
+        original_extra_email_context = self.extra_email_context
+        self.extra_email_context = self.get_extra_email_context()
         try:
-            self.extra_email_context = self.get_extra_email_context()
             return super().form_valid(form)
-        except Exception as exc:
+        except (SMTPException, ConnectionError, TimeoutError, OSError) as exc:
             logger.warning(
                 'Password reset email delivery failed for a submitted request: %s',
                 exc.__class__.__name__,
             )
-        return redirect(self.get_success_url())
+            return redirect(self.get_success_url())
+        finally:
+            self.extra_email_context = original_extra_email_context
 
 
 @require_http_methods(['GET', 'POST'])

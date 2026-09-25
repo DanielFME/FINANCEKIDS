@@ -1,4 +1,5 @@
 from unittest.mock import patch
+from smtplib import SMTPException
 
 from django.core import mail
 from django.db import connection
@@ -180,13 +181,21 @@ class AuthAndProgressFlowTests(TestCase):
 		self.assertRedirects(response, reverse('password_reset_done'))
 		self.assertEqual(len(mail.outbox), 0)
 
-	@patch('django.contrib.auth.forms.PasswordResetForm.send_mail', side_effect=Exception('SMTP fail'))
+	@patch('django.contrib.auth.forms.PasswordResetForm.send_mail', side_effect=SMTPException('SMTP fail'))
 	def test_password_reset_no_revela_existencia_si_el_envio_falla(self, mock_send):
 		response = self.client.post(
 			reverse('password_reset'),
 			data={'email': self.user.email},
 		)
 		self.assertRedirects(response, reverse('password_reset_done'))
+
+	@patch('django.contrib.auth.forms.PasswordResetForm.send_mail', side_effect=ValueError('Template fail'))
+	def test_password_reset_error_no_relacionado_con_email_se_propaga(self, mock_send):
+		with self.assertRaises(ValueError):
+			self.client.post(
+				reverse('password_reset'),
+				data={'email': self.user.email},
+			)
 
 	@override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
 	def test_password_reset_confirma_y_anula_reutilizacion_del_enlace(self):
