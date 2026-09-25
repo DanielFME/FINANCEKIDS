@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+from urllib.parse import urlparse
 from dotenv import load_dotenv
 import dj_database_url
 
@@ -43,9 +44,26 @@ def parse_database_url(database_url, debug=False):
 
 
 def build_mysql_database_config(env, debug=False):
-    mysql_url = env_get(env, 'MYSQL_URL') or env_get(env, 'MYSQL_ADDON_URI', '')
+    mysql_url = env_get(env, 'MYSQL_URL')
+    mysql_addon_uri = env_get(env, 'MYSQL_ADDON_URI', '')
+    parsed_uri = None
+
     if mysql_url:
         config = parse_database_url(mysql_url, debug=debug)
+    elif mysql_addon_uri:
+        parsed_uri_input = mysql_addon_uri if '://' in mysql_addon_uri else f'//{mysql_addon_uri}'
+        parsed_uri = urlparse(parsed_uri_input)
+        if '://' in mysql_addon_uri:
+            config = parse_database_url(mysql_addon_uri, debug=debug)
+        else:
+            config = {
+                'ENGINE': 'django.db.backends.mysql',
+                'NAME': 'financekids',
+                'USER': 'root',
+                'PASSWORD': '',
+                'HOST': 'localhost',
+                'PORT': '3306',
+            }
     else:
         config = {
             'ENGINE': 'django.db.backends.mysql',
@@ -81,6 +99,13 @@ def build_mysql_database_config(env, debug=False):
         or env_get(env, 'MYSQL_ADDON_PORT')
         or env_get(env, 'DB_PORT')
     )
+
+    if parsed_uri:
+        db_name = db_name or (parsed_uri.path.lstrip('/') if parsed_uri.path else None)
+        db_user = db_user or parsed_uri.username
+        db_password = db_password or parsed_uri.password
+        db_host = db_host or parsed_uri.hostname
+        db_port = db_port or (str(parsed_uri.port) if parsed_uri.port else None)
 
     config['NAME'] = db_name or config.get('NAME') or 'financekids'
     config['USER'] = db_user or config.get('USER') or 'root'

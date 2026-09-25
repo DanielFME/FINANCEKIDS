@@ -515,6 +515,19 @@ class RailwayDatabaseSettingsTests(SimpleTestCase):
         self.assertEqual(config['HOST'], 'mysql.railway.internal')
         self.assertEqual(config['PORT'], '3306')
 
+    def test_scheme_less_mysql_addon_uri_still_works(self):
+        config = build_default_database_config(
+            env={'MYSQL_ADDON_URI': 'legacy_user:legacy_pass@legacy-host:3308/legacy_db'},
+            debug=False,
+        )
+
+        self.assertEqual(config['ENGINE'], 'django.db.backends.mysql')
+        self.assertEqual(config['NAME'], 'legacy_db')
+        self.assertEqual(config['USER'], 'legacy_user')
+        self.assertEqual(config['PASSWORD'], 'legacy_pass')
+        self.assertEqual(config['HOST'], 'legacy-host')
+        self.assertEqual(config['PORT'], '3308')
+
 
 # ---------------------------------------------------------------------------
 # Management command tests
