@@ -8,7 +8,7 @@ from django.utils import timezone
 from game.models import UserProfile
 
 
-class FinanceKidsPasswordResetForm(forms.Form):
+class FinanceKidsPasswordResetForm(auth_forms.PasswordResetForm):
     email = forms.EmailField(
         widget=forms.EmailInput(
             attrs={
