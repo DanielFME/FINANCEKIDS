@@ -444,6 +444,20 @@ class RailwayDatabaseSettingsTests(SimpleTestCase):
 		self.assertEqual(str(config['PORT']), '6543')
 		self.assertNotIn('sslmode', config.get('OPTIONS', {}))
 
+	def test_parse_database_url_ignores_unrelated_environment_variable(self):
+		mysql_url = 'mysql://railway:' + 'secret@db.example.com:3306/railway_db'
+		with patch.dict(
+			'os.environ',
+			{'FINANCEKIDS_INTERNAL_DATABASE_URL': 'mysql://wrong:' + 'wrong@other-host:3306/wrong_db'},
+			clear=False,
+		):
+			config = parse_database_url(mysql_url, debug=False)
+
+		self.assertEqual(config['NAME'], 'railway_db')
+		self.assertEqual(config['USER'], 'railway')
+		self.assertEqual(config['PASSWORD'], 'secret')
+		self.assertEqual(config['HOST'], 'db.example.com')
+
 	def test_build_default_database_config_uses_mysql_url_branch(self):
 		mysql_url = (
 			'mysql://railway:' +
