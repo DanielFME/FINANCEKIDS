@@ -103,7 +103,7 @@ def build_default_database_config(env=None, debug=False, base_dir=BASE_DIR):
     if database_url:
         return parse_database_url(database_url, debug=debug)
 
-    mysql_url = env_get(env, 'MYSQL_URL') or env_get(env, 'MYSQL_ADDON_URI')
+    mysql_url = env_get(env, 'MYSQL_URL')
     if mysql_url:
         return parse_database_url(mysql_url, debug=debug)
 

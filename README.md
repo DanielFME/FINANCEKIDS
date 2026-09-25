@@ -140,7 +140,8 @@ Cuando usa `DATABASE_URL`, se aplica:
 Configuracion validada para este proyecto Django:
 - WSGI: `financekids.wsgi:application`
 - Build Railway: instala `requirements.txt` y ejecuta `collectstatic`
-- Start Railway: ejecuta `migrate` y luego `gunicorn` en `0.0.0.0:$PORT`
+- Pre-deploy Railway: ejecuta `migrate`
+- Start Railway: ejecuta `gunicorn` en `0.0.0.0:$PORT`
 
 ### 1) Conectar el repositorio
 1. En Railway, crea un proyecto nuevo.
@@ -177,9 +178,8 @@ Alternativa soportada si prefieres no mapear `DATABASE_URL`:
 2. Lanza el deploy.
 3. Railway usara `railway.toml`:
    - build: `pip install -r requirements.txt && python manage.py collectstatic --noinput`
-   - start: `python manage.py migrate --noinput && gunicorn financekids.wsgi:application --bind 0.0.0.0:$PORT --workers 2`
-
-> En este repositorio se mantiene `migrate` en el comando de arranque para no introducir una estrategia de pre-deploy no validada aqui. Eso evita romper el flujo actual y mantiene compatibilidad con el despliegue existente.
+   - pre-deploy: `python manage.py migrate --noinput`
+   - start: `gunicorn financekids.wsgi:application --bind 0.0.0.0:$PORT --workers 2`
 
 ### 5) Generar dominio publico
 1. En Railway, abre el servicio web.

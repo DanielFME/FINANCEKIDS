@@ -444,6 +444,23 @@ class RailwayDatabaseSettingsTests(SimpleTestCase):
 		self.assertEqual(str(config['PORT']), '6543')
 		self.assertNotIn('sslmode', config.get('OPTIONS', {}))
 
+	def test_build_default_database_config_uses_mysql_url_branch(self):
+		mysql_url = (
+			'mysql://railway:' +
+			'secret@containers-us-west-12.railway.app:6543/railway_db'
+		)
+		config = build_default_database_config(
+			env={'MYSQL_URL': mysql_url},
+			debug=False,
+		)
+
+		self.assertEqual(config['ENGINE'], 'django.db.backends.mysql')
+		self.assertEqual(config['NAME'], 'railway_db')
+		self.assertEqual(config['USER'], 'railway')
+		self.assertEqual(config['PASSWORD'], 'secret')
+		self.assertEqual(config['HOST'], 'containers-us-west-12.railway.app')
+		self.assertEqual(str(config['PORT']), '6543')
+
 	def test_railway_mysql_variables_build_mysql_config(self):
 		config = build_default_database_config(
 			env={
