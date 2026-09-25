@@ -18,15 +18,25 @@ def _get_user_profile(user):
 
 
 class FinanceKidsPasswordResetView(auth_views.PasswordResetView):
+
     def form_valid(self, form):
+
         try:
+
             return super().form_valid(form)
-        except Exception:
+
+        except Exception as e:
+
+            print("ERROR AL ENVIAR CORREO:", e)
+
             messages.error(
                 self.request,
-                'No se pudo enviar el correo de recuperación en este momento. Verifica la configuración del correo o intenta nuevamente.',
+                f"Error: {e}",
             )
-            return self.render_to_response(self.get_context_data(form=form))
+
+            return self.render_to_response(
+                self.get_context_data(form=form)
+            )
 
 
 @require_http_methods(['GET', 'POST'])
