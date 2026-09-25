@@ -197,13 +197,22 @@ LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/juego1/'
 LOGOUT_REDIRECT_URL = '/'
 
-EMAIL_BACKEND = get_env('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
-EMAIL_HOST = get_env('EMAIL_HOST', 'smtp.gmail.com')
-EMAIL_PORT = int(get_env('EMAIL_PORT', '587'))
+EMAIL_BACKEND = get_env(
+    'EMAIL_BACKEND',
+    'django.core.mail.backends.smtp.EmailBackend'
+)
+
+EMAIL_HOST = get_env('EMAIL_HOST', 'sandbox.smtp.mailtrap.io')
+EMAIL_PORT = int(get_env('EMAIL_PORT', '2525'))
 EMAIL_USE_TLS = str_to_bool(get_env('EMAIL_USE_TLS', 'true'))
+
 EMAIL_HOST_USER = get_env('EMAIL_HOST_USER', '')
 EMAIL_HOST_PASSWORD = get_env('EMAIL_HOST_PASSWORD', '')
-DEFAULT_FROM_EMAIL = get_env('DEFAULT_FROM_EMAIL', 'no-reply@financekids.local')
+
+DEFAULT_FROM_EMAIL = get_env(
+    'DEFAULT_FROM_EMAIL',
+    'noreply@financekids.com'
+)
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
