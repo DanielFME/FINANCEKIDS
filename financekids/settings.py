@@ -1,6 +1,5 @@
-﻿from pathlib import Path
+from pathlib import Path
 import os
-from urllib.parse import urlparse
 from dotenv import load_dotenv
 import dj_database_url
 
@@ -43,9 +42,19 @@ def parse_database_url(database_url, debug=False):
     )
 
 
-def build_mysql_database_config(env):
+def build_mysql_database_config(env, debug=False):
     mysql_url = env_get(env, 'MYSQL_URL') or env_get(env, 'MYSQL_ADDON_URI', '')
-    parsed_url = urlparse(mysql_url) if mysql_url else None
+    if mysql_url:
+        config = parse_database_url(mysql_url, debug=debug)
+    else:
+        config = {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'financekids',
+            'USER': 'root',
+            'PASSWORD': '',
+            'HOST': 'localhost',
+            'PORT': '3306',
+        }
 
     db_name = (
         env_get(env, 'MYSQLDATABASE')
@@ -73,21 +82,13 @@ def build_mysql_database_config(env):
         or env_get(env, 'DB_PORT')
     )
 
-    if parsed_url:
-        db_name = db_name or (parsed_url.path.lstrip('/') if parsed_url.path else None)
-        db_user = db_user or parsed_url.username
-        db_password = db_password or parsed_url.password
-        db_host = db_host or parsed_url.hostname
-        db_port = db_port or (str(parsed_url.port) if parsed_url.port else None)
+    config['NAME'] = db_name or config.get('NAME') or 'financekids'
+    config['USER'] = db_user or config.get('USER') or 'root'
+    config['PASSWORD'] = db_password or config.get('PASSWORD') or ''
+    config['HOST'] = db_host or config.get('HOST') or 'localhost'
+    config['PORT'] = db_port or config.get('PORT') or '3306'
 
-    return {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': db_name or 'financekids',
-        'USER': db_user or 'root',
-        'PASSWORD': db_password or '',
-        'HOST': db_host or 'localhost',
-        'PORT': db_port or '3306',
-    }
+    return config
 
 
 def build_default_database_config(env=None, debug=False, base_dir=BASE_DIR):
@@ -103,11 +104,7 @@ def build_default_database_config(env=None, debug=False, base_dir=BASE_DIR):
     if database_url:
         return parse_database_url(database_url, debug=debug)
 
-    mysql_url = env_get(env, 'MYSQL_URL')
-    if mysql_url:
-        return parse_database_url(mysql_url, debug=debug)
-
-    return build_mysql_database_config(env)
+    return build_mysql_database_config(env, debug=debug)
 
 
 # default=False: si olvidas definir DEBUG en producción, falla de forma segura.

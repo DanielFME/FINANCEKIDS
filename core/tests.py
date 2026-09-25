@@ -461,6 +461,27 @@ class RailwayDatabaseSettingsTests(SimpleTestCase):
 		self.assertEqual(config['HOST'], 'containers-us-west-12.railway.app')
 		self.assertEqual(str(config['PORT']), '6543')
 
+	def test_mysql_variables_override_mysql_url_components(self):
+		mysql_url = 'mysql://old_user:' + 'old_pass@old-host:3306/old_db'
+		config = build_default_database_config(
+			env={
+				'MYSQL_URL': mysql_url,
+				'MYSQLHOST': 'mysql.railway.internal',
+				'MYSQLPORT': '3307',
+				'MYSQLUSER': 'new_user',
+				'MYSQLPASSWORD': 'new_pass',
+				'MYSQLDATABASE': 'new_db',
+			},
+			debug=False,
+		)
+
+		self.assertEqual(config['ENGINE'], 'django.db.backends.mysql')
+		self.assertEqual(config['NAME'], 'new_db')
+		self.assertEqual(config['USER'], 'new_user')
+		self.assertEqual(config['PASSWORD'], 'new_pass')
+		self.assertEqual(config['HOST'], 'mysql.railway.internal')
+		self.assertEqual(config['PORT'], '3307')
+
 	def test_railway_mysql_variables_build_mysql_config(self):
 		config = build_default_database_config(
 			env={
