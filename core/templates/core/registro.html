@@ -127,6 +127,29 @@
                             </div>
                         </div>
 
+                        <!-- Correo electrónico -->
+                        <div class="field-block">
+                            <label class="field-label" for="id_email">
+                                Correo electrónico <span style="color:#f87171">*</span>
+                            </label>
+                            {% if form.email.errors %}
+                            <div class="error-msg">
+                                <i class="bi bi-x-circle-fill"></i>{{ form.email.errors|striptags }}
+                            </div>
+                            {% endif %}
+                            <div class="input-wrap">
+                                <i class="bi bi-envelope-fill input-icon-left"></i>
+                                <input
+                                    id="id_email"
+                                    class="field-input {% if form.email.errors %}field-error{% endif %}"
+                                    type="email" name="email"
+                                    placeholder="Ej: tu@email.com"
+                                    value="{{ form.email.value|default_if_none:'' }}"
+                                    autocomplete="email" required
+                                >
+                            </div>
+                        </div>
+
                         <!-- Contraseña -->
                         <div class="field-block">
                             <label class="field-label" for="id_password1">

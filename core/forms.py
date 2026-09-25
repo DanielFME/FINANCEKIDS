@@ -1,10 +1,38 @@
 from django import forms
+from django.contrib.auth import forms as auth_forms
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 
 from game.models import UserProfile
+
+
+class FinanceKidsPasswordResetForm(forms.Form):
+    email = forms.EmailField(
+        widget=forms.EmailInput(
+            attrs={
+                'class': 'input-kids',
+                'placeholder': 'Correo electrónico',
+                'autocomplete': 'email',
+            }
+        )
+    )
+
+
+class FinanceKidsSetPasswordForm(auth_forms.SetPasswordForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['new_password1'].widget.attrs.update({
+            'class': 'input-kids',
+            'placeholder': 'Nueva contraseña',
+            'autocomplete': 'new-password',
+        })
+        self.fields['new_password2'].widget.attrs.update({
+            'class': 'input-kids',
+            'placeholder': 'Confirmar nueva contraseña',
+            'autocomplete': 'new-password',
+        })
 
 
 class RegistroForm(forms.Form):
@@ -45,7 +73,7 @@ class RegistroForm(forms.Form):
     def clean_email(self):
         email = self.cleaned_data['email'].strip()
         if User.objects.filter(email__iexact=email).exists():
-            raise ValidationError('Este correo ya está registrado.')
+            raise ValidationError('Ese correo ya se encuentra registrado.')
         return email
 
     def clean_fecha_nacimiento(self):

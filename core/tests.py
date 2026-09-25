@@ -15,7 +15,11 @@ class AuthAndProgressFlowTests(TestCase):
 
 	def setUp(self):
 		self.password = 'Segura123!'
-		self.user = User.objects.create_user(username='nino', password=self.password)
+		self.user = User.objects.create_user(
+			username='nino',
+			email='nino@example.com',
+			password=self.password,
+		)
 		UserProfile.objects.create(usuario=self.user)
 
 	def test_login_page_renders(self):
@@ -127,6 +131,24 @@ class AuthAndProgressFlowTests(TestCase):
 		)
 		self.assertEqual(response.status_code, 200)
 		self.assertContains(response, 'El nombre de usuario ya existe')
+
+	def test_registro_rechaza_email_duplicado(self):
+		response = self.client.post(
+			reverse('registro'),
+			data={
+				'username': 'email_duplicado',
+				'email': self.user.email,
+				'password1': 'OtraClave123!',
+				'password2': 'OtraClave123!',
+				'nombre_tutor': 'Tutor Email Duplicado',
+				'email_tutor': 'tutor.emailduplicado@example.com',
+				'acepto_terminos': 'on',
+				'consentimiento_tutor': 'on',
+			},
+		)
+		self.assertEqual(response.status_code, 200)
+		self.assertContains(response, 'Ese correo ya se encuentra registrado')
+		self.assertFalse(User.objects.filter(username='email_duplicado').exists())
 
 	def test_registro_requiere_aceptar_terminos_y_consentimiento(self):
 		response = self.client.post(
