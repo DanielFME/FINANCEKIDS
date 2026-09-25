@@ -4,6 +4,7 @@ from django.urls import path
 
 from core import views
 from core.forms import FinanceKidsPasswordResetForm, FinanceKidsSetPasswordForm
+from core.views import FinanceKidsPasswordResetView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -18,7 +19,7 @@ urlpatterns = [
     path('juego2/', views.juego2, name='juego2'),
     path('preguntas2/', views.preguntas2, name='preguntas2'),
     path('construccion/', views.construccion, name='construccion'),
-    path('password_reset/', auth_views.PasswordResetView.as_view(
+    path('password_reset/', FinanceKidsPasswordResetView.as_view(
         template_name='core/password_reset.html',
         email_template_name='core/password_reset_email.html',
         success_url='/password_reset/done/',

@@ -150,6 +150,15 @@ class AuthAndProgressFlowTests(TestCase):
 		self.assertContains(response, 'Ese correo ya se encuentra registrado')
 		self.assertFalse(User.objects.filter(username='email_duplicado').exists())
 
+	@patch('django.core.mail.send_mail', side_effect=Exception('SMTP fail'))
+	def test_password_reset_no_500_si_el_envio_falla(self, mock_send):
+		response = self.client.post(
+			reverse('password_reset'),
+			data={'email': self.user.email},
+		)
+		self.assertEqual(response.status_code, 200)
+		self.assertContains(response, 'No se pudo enviar el correo de recuperación')
+
 	def test_registro_requiere_aceptar_terminos_y_consentimiento(self):
 		response = self.client.post(
 			reverse('registro'),

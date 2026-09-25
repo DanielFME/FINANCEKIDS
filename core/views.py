@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, views as auth_views
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -15,6 +15,18 @@ from game.models import UserProfile
 def _get_user_profile(user):
     profile, _ = UserProfile.objects.get_or_create(usuario=user)
     return profile
+
+
+class FinanceKidsPasswordResetView(auth_views.PasswordResetView):
+    def form_valid(self, form):
+        try:
+            return super().form_valid(form)
+        except Exception:
+            messages.error(
+                self.request,
+                'No se pudo enviar el correo de recuperación en este momento. Verifica la configuración del correo o intenta nuevamente.',
+            )
+            return self.render_to_response(self.get_context_data(form=form))
 
 
 @require_http_methods(['GET', 'POST'])
