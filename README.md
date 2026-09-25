@@ -146,7 +146,7 @@ Configuracion validada para este proyecto Django:
 ### 1) Conectar el repositorio
 1. En Railway, crea un proyecto nuevo.
 2. Elige **Deploy from GitHub repo**.
-3. Selecciona `DanielFME/FINANCEKIDS`.
+3. Selecciona este repositorio en la lista de GitHub.
 
 ### 2) Agregar MySQL administrado
 1. En el proyecto, agrega un servicio **MySQL**.
