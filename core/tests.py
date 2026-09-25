@@ -1,9 +1,15 @@
 from unittest.mock import patch
 
+from django.core import mail
+from django.db import connection
+from django.contrib.auth.tokens import default_token_generator
 from django.test import TestCase, RequestFactory
+from django.test import override_settings
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
 
 from core.forms import RegistroForm
 from core.openai_api import generar_pregunta
@@ -150,14 +156,58 @@ class AuthAndProgressFlowTests(TestCase):
 		self.assertContains(response, 'Ese correo ya se encuentra registrado')
 		self.assertFalse(User.objects.filter(username='email_duplicado').exists())
 
-	@patch('django.core.mail.send_mail', side_effect=Exception('SMTP fail'))
-	def test_password_reset_no_500_si_el_envio_falla(self, mock_send):
+	@override_settings(
+		EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend',
+		PUBLIC_BASE_URL='https://kids.example.com',
+	)
+	def test_password_reset_envia_correo_con_base_url_publica(self):
 		response = self.client.post(
 			reverse('password_reset'),
 			data={'email': self.user.email},
 		)
-		self.assertEqual(response.status_code, 200)
-		self.assertContains(response, 'No se pudo enviar el correo de recuperación')
+		self.assertRedirects(response, reverse('password_reset_done'))
+		self.assertEqual(len(mail.outbox), 1)
+		self.assertEqual(mail.outbox[0].to, [self.user.email])
+		self.assertIn('https://kids.example.com/reset/', mail.outbox[0].body)
+		self.assertNotIn('testserver', mail.outbox[0].body)
+
+	@override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
+	def test_password_reset_para_email_inexistente_no_revela_si_existe(self):
+		response = self.client.post(
+			reverse('password_reset'),
+			data={'email': 'nadie@example.com'},
+		)
+		self.assertRedirects(response, reverse('password_reset_done'))
+		self.assertEqual(len(mail.outbox), 0)
+
+	@patch('django.contrib.auth.forms.PasswordResetForm.send_mail', side_effect=Exception('SMTP fail'))
+	def test_password_reset_no_revela_existencia_si_el_envio_falla(self, mock_send):
+		response = self.client.post(
+			reverse('password_reset'),
+			data={'email': self.user.email},
+		)
+		self.assertRedirects(response, reverse('password_reset_done'))
+
+	@override_settings(EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend')
+	def test_password_reset_confirma_y_anula_reutilizacion_del_enlace(self):
+		uidb64 = urlsafe_base64_encode(force_bytes(self.user.pk))
+		token = default_token_generator.make_token(self.user)
+		reset_url = reverse('password_reset_confirm', kwargs={'uidb64': uidb64, 'token': token})
+
+		response = self.client.get(reset_url)
+		self.assertEqual(response.status_code, 302)
+		set_password_url = response.url
+		self.assertIn('/set-password/', set_password_url)
+
+		response = self.client.post(
+			set_password_url,
+			data={'new_password1': 'NuevaClaveSegura123!', 'new_password2': 'NuevaClaveSegura123!'},
+		)
+		self.assertRedirects(response, reverse('password_reset_complete'))
+		self.assertTrue(self.client.login(username=self.user.username, password='NuevaClaveSegura123!'))
+
+		reused_response = self.client.get(reset_url, follow=True)
+		self.assertContains(reused_response, 'Este enlace ya fue usado o no es válido')
 
 	def test_registro_requiere_aceptar_terminos_y_consentimiento(self):
 		response = self.client.post(
@@ -450,7 +500,8 @@ class UnifyMysqlSchemaCommandTests(TestCase):
 		from django.core.management import call_command
 		from django.core.management.base import CommandError
 
-		with self.assertRaises(CommandError) as ctx:
-			call_command('unify_mysql_schema', stdout=StringIO(), stderr=StringIO())
+		with patch.dict(connection.settings_dict, {'ENGINE': 'django.db.backends.sqlite3'}, clear=False):
+			with self.assertRaises(CommandError) as ctx:
+				call_command('unify_mysql_schema', stdout=StringIO(), stderr=StringIO())
 
 		self.assertIn('MySQL', str(ctx.exception))

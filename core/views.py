@@ -1,3 +1,6 @@
+import logging
+from urllib.parse import urlparse
+
 from django.conf import settings
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect
@@ -11,6 +14,8 @@ from django.views.decorators.http import require_http_methods, require_POST
 from core.forms import RegistroForm
 from game.models import UserProfile
 
+logger = logging.getLogger(__name__)
+
 
 def _get_user_profile(user):
     profile, _ = UserProfile.objects.get_or_create(usuario=user)
@@ -18,15 +23,33 @@ def _get_user_profile(user):
 
 
 class FinanceKidsPasswordResetView(auth_views.PasswordResetView):
+    def _get_email_options(self):
+        options = {
+            'use_https': self.request.is_secure(),
+            'token_generator': self.token_generator,
+            'from_email': self.from_email,
+            'email_template_name': self.email_template_name,
+            'subject_template_name': self.subject_template_name,
+            'request': self.request,
+            'html_email_template_name': self.html_email_template_name,
+            'extra_email_context': self.extra_email_context,
+        }
+        public_base_url = getattr(settings, 'PUBLIC_BASE_URL', '')
+        if public_base_url:
+            parsed = urlparse(public_base_url)
+            options['domain_override'] = parsed.netloc
+            options['use_https'] = parsed.scheme == 'https'
+        return options
+
     def form_valid(self, form):
         try:
-            return super().form_valid(form)
-        except Exception:
-            messages.error(
-                self.request,
-                'No se pudo enviar el correo de recuperación en este momento. Verifica la configuración del correo o intenta nuevamente.',
+            form.save(**self._get_email_options())
+        except Exception as exc:
+            logger.warning(
+                'Password reset email delivery failed for a submitted request: %s',
+                exc.__class__.__name__,
             )
-            return self.render_to_response(self.get_context_data(form=form))
+        return redirect(self.get_success_url())
 
 
 @require_http_methods(['GET', 'POST'])

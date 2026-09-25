@@ -8,8 +8,9 @@ from django.utils import timezone
 from game.models import UserProfile
 
 
-class FinanceKidsPasswordResetForm(forms.Form):
+class FinanceKidsPasswordResetForm(auth_forms.PasswordResetForm):
     email = forms.EmailField(
+        error_messages={'required': 'El email es obligatorio.'},
         widget=forms.EmailInput(
             attrs={
                 'class': 'input-kids',
@@ -18,6 +19,9 @@ class FinanceKidsPasswordResetForm(forms.Form):
             }
         )
     )
+
+    def clean_email(self):
+        return self.cleaned_data['email'].strip()
 
 
 class FinanceKidsSetPasswordForm(auth_forms.SetPasswordForm):
