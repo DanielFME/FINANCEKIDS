@@ -18,26 +18,24 @@ def _get_user_profile(user):
 
 
 class FinanceKidsPasswordResetView(auth_views.PasswordResetView):
-
     def form_valid(self, form):
+        print("EMAIL_BACKEND:", settings.EMAIL_BACKEND)
+        print("EMAIL_HOST:", settings.EMAIL_HOST)
+        print("EMAIL_PORT:", settings.EMAIL_PORT)
+        print("EMAIL_USE_TLS:", settings.EMAIL_USE_TLS)
+        print("EMAIL_HOST_USER:", settings.EMAIL_HOST_USER)
 
         try:
-
             return super().form_valid(form)
-
         except Exception as e:
-
-            print("ERROR AL ENVIAR CORREO:", e)
-
+            print("ERROR AL ENVIAR CORREO:", repr(e))
             messages.error(
                 self.request,
                 f"Error: {e}",
             )
-
             return self.render_to_response(
                 self.get_context_data(form=form)
             )
-
 
 @require_http_methods(['GET', 'POST'])
 def login_view(request):
