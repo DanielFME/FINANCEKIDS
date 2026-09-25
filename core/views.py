@@ -1,5 +1,4 @@
 import logging
-from smtplib import SMTPException
 from urllib.parse import urlparse
 
 from django.conf import settings
@@ -12,7 +11,7 @@ from django.contrib import messages
 from django.http import Http404
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods, require_POST
-from core.forms import RegistroForm
+from core.forms import PasswordResetEmailDeliveryError, RegistroForm
 from game.models import UserProfile
 
 logger = logging.getLogger(__name__)
@@ -41,10 +40,10 @@ class FinanceKidsPasswordResetView(auth_views.PasswordResetView):
         self.extra_email_context = self.get_extra_email_context()
         try:
             return super().form_valid(form)
-        except (SMTPException, ConnectionError, TimeoutError, OSError) as exc:
+        except PasswordResetEmailDeliveryError as exc:
             logger.warning(
                 'Password reset email delivery failed for a submitted request: %s',
-                exc.__class__.__name__,
+                exc.__cause__.__class__.__name__ if exc.__cause__ else exc.__class__.__name__,
             )
             return redirect(self.get_success_url())
         finally:

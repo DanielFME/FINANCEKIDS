@@ -164,7 +164,7 @@ class AuthAndProgressFlowTests(TestCase):
 	def test_password_reset_envia_correo_con_base_url_publica(self):
 		response = self.client.post(
 			reverse('password_reset'),
-			data={'email': self.user.email},
+			data={'email': self.user.email.upper()},
 		)
 		self.assertRedirects(response, reverse('password_reset_done'))
 		self.assertEqual(len(mail.outbox), 1)
@@ -181,7 +181,7 @@ class AuthAndProgressFlowTests(TestCase):
 		self.assertRedirects(response, reverse('password_reset_done'))
 		self.assertEqual(len(mail.outbox), 0)
 
-	@patch('django.contrib.auth.forms.PasswordResetForm.send_mail', side_effect=SMTPException('SMTP fail'))
+	@patch('core.forms.EmailMultiAlternatives.send', side_effect=SMTPException('SMTP fail'))
 	def test_password_reset_no_revela_existencia_si_el_envio_falla(self, mock_send):
 		response = self.client.post(
 			reverse('password_reset'),
@@ -189,7 +189,7 @@ class AuthAndProgressFlowTests(TestCase):
 		)
 		self.assertRedirects(response, reverse('password_reset_done'))
 
-	@patch('django.contrib.auth.forms.PasswordResetForm.send_mail', side_effect=ValueError('Template fail'))
+	@patch('core.forms.loader.render_to_string', side_effect=ValueError('Template fail'))
 	def test_password_reset_error_no_relacionado_con_email_se_propaga(self, mock_send):
 		with self.assertRaises(ValueError):
 			self.client.post(

@@ -2,10 +2,17 @@ from django import forms
 from django.contrib.auth import forms as auth_forms
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
+from django.core.mail import EmailMultiAlternatives
 from django.core.exceptions import ValidationError
+from django.template import loader
 from django.utils import timezone
+from smtplib import SMTPException
 
 from game.models import UserProfile
+
+
+class PasswordResetEmailDeliveryError(Exception):
+    """Raised when the reset email could not be delivered by the mail backend."""
 
 
 class FinanceKidsPasswordResetForm(auth_forms.PasswordResetForm):
@@ -21,7 +28,28 @@ class FinanceKidsPasswordResetForm(auth_forms.PasswordResetForm):
     )
 
     def clean_email(self):
-        return self.cleaned_data['email'].strip()
+        return self.cleaned_data['email'].strip().lower()
+
+    def send_mail(
+        self,
+        subject_template_name,
+        email_template_name,
+        context,
+        from_email,
+        to_email,
+        html_email_template_name=None,
+    ):
+        subject = loader.render_to_string(subject_template_name, context)
+        subject = ''.join(subject.splitlines())
+        body = loader.render_to_string(email_template_name, context)
+        email_message = EmailMultiAlternatives(subject, body, from_email, [to_email])
+        if html_email_template_name is not None:
+            html_email = loader.render_to_string(html_email_template_name, context)
+            email_message.attach_alternative(html_email, 'text/html')
+        try:
+            email_message.send()
+        except (SMTPException, OSError) as exc:
+            raise PasswordResetEmailDeliveryError from exc
 
 
 class FinanceKidsSetPasswordForm(auth_forms.SetPasswordForm):
