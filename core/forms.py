@@ -9,6 +9,7 @@ from game.models import UserProfile
 
 class RegistroForm(forms.Form):
     username = forms.CharField(max_length=150)
+    email = forms.EmailField(required=True, error_messages={'required': 'El email es obligatorio.'})
     password1 = forms.CharField(widget=forms.PasswordInput)
     password2 = forms.CharField(widget=forms.PasswordInput)
     fecha_nacimiento = forms.DateField(required=False)
@@ -40,6 +41,12 @@ class RegistroForm(forms.Form):
         if User.objects.filter(username__iexact=username).exists():
             raise ValidationError('El nombre de usuario ya existe.')
         return username
+
+    def clean_email(self):
+        email = self.cleaned_data['email'].strip()
+        if User.objects.filter(email__iexact=email).exists():
+            raise ValidationError('Este correo ya está registrado.')
+        return email
 
     def clean_fecha_nacimiento(self):
         fecha_nacimiento = self.cleaned_data.get('fecha_nacimiento')
@@ -75,6 +82,7 @@ class RegistroForm(forms.Form):
 
         user = User.objects.create_user(
             username=self.cleaned_data['username'],
+            email=self.cleaned_data['email'],
             password=self.cleaned_data['password1'],
         )
         UserProfile.objects.update_or_create(

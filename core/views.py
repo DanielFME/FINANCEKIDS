@@ -1,9 +1,12 @@
+from django.conf import settings
+from django.core.mail import send_mail
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import Http404
+from django.utils import timezone
 from django.views.decorators.http import require_http_methods, require_POST
 from core.forms import RegistroForm
 from game.models import UserProfile
@@ -26,6 +29,26 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
+
+            if user.email:
+                try:
+                    send_mail(
+                        subject='Confirmación de inicio de sesión - FinanceKids',
+                        message=(
+                            f"Hola {user.get_full_name() or user.username},\n\n"
+                            "Se ha iniciado sesión correctamente en FinanceKids.\n\n"
+                            f"Usuario: {user.username}\n"
+                            f"Fecha y hora: {timezone.localtime(timezone.now()).strftime('%d/%m/%Y %H:%M:%S')}\n"
+                            f"IP: {request.META.get('REMOTE_ADDR', 'Desconocida')}\n\n"
+                            "Si no fuiste tú, cambia tu contraseña inmediatamente."
+                        ),
+                        from_email=settings.DEFAULT_FROM_EMAIL,
+                        recipient_list=[user.email],
+                        fail_silently=False,
+                    )
+                except Exception:
+                    messages.error(request, 'El inicio de sesión fue correcto, pero no se pudo enviar la confirmación por correo.')
+
             return redirect('index')
         return render(request, 'core/login.html', {'error': 'Usuario o contraseña incorrectos'})
 

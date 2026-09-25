@@ -70,6 +70,7 @@ class AuthAndProgressFlowTests(TestCase):
 			reverse('registro'),
 			data={
 				'username': 'nuevo_nino',
+				'email': 'nuevo_nino@example.com',
 				'password1': 'ClaveSegura123!',
 				'password2': 'ClaveSegura123!',
 				'fecha_nacimiento': '2015-10-03',
@@ -97,6 +98,7 @@ class AuthAndProgressFlowTests(TestCase):
 			reverse('registro'),
 			data={
 				'username': 'nino_mismatch',
+				'email': 'nino_mismatch@example.com',
 				'password1': 'ClaveSegura123!',
 				'password2': 'ClaveSeguraXYZ!',
 				'nombre_tutor': 'Tutor Mismatch',
@@ -114,6 +116,7 @@ class AuthAndProgressFlowTests(TestCase):
 			reverse('registro'),
 			data={
 				'username': self.user.username,
+				'email': 'duplicado@example.com',
 				'password1': 'OtraClave123!',
 				'password2': 'OtraClave123!',
 				'nombre_tutor': 'Tutor Duplicado',
@@ -130,6 +133,7 @@ class AuthAndProgressFlowTests(TestCase):
 			reverse('registro'),
 			data={
 				'username': 'nino_sin_consent',
+				'email': 'nino_sin_consent@example.com',
 				'password1': 'ClaveSegura123!',
 				'password2': 'ClaveSegura123!',
 				'nombre_tutor': 'Tutor Sin Consent',
@@ -146,6 +150,7 @@ class AuthAndProgressFlowTests(TestCase):
 			reverse('registro'),
 			data={
 				'username': 'nino_sin_tutor',
+				'email': 'nino_sin_tutor@example.com',
 				'password1': 'ClaveSegura123!',
 				'password2': 'ClaveSegura123!',
 				'acepto_terminos': 'on',
@@ -166,6 +171,7 @@ class RegistroFormTests(TestCase):
 
 	BASE_DATA = {
 		'username': 'formuser',
+		'email': 'formuser@example.com',
 		'password1': 'ClaveSegura123!',
 		'password2': 'ClaveSegura123!',
 		'nombre_tutor': 'Tutor Test',
