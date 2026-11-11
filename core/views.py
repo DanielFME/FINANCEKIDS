@@ -1,3 +1,4 @@
+import json
 from django.conf import settings
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect
@@ -5,11 +6,12 @@ from django.contrib.auth import authenticate, login, logout, views as auth_views
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from django.utils import timezone
 from django.views.decorators.http import require_http_methods, require_POST
 from core.forms import RegistroForm
 from game.models import UserProfile
+from core.ai import preguntar_tutor
 
 
 def _get_user_profile(user):
@@ -179,3 +181,14 @@ def preguntas2(request):
 @login_required
 def construccion(request):
     return render(request, 'core/construccion.html')
+
+@login_required
+@require_POST
+def tutor_view(request):
+    try:
+        pregunta = json.loads(request.body).get("pregunta", "").strip()[:300]
+    except json.JSONDecodeError:
+        return JsonResponse({"respuesta": "Escribe una pregunta."})
+    if not pregunta:
+        return JsonResponse({"respuesta": "Escribe una pregunta."})
+    return JsonResponse({"respuesta": preguntar_tutor(pregunta)})

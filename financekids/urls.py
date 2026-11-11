@@ -19,6 +19,7 @@ urlpatterns = [
     path('juego2/', views.juego2, name='juego2'),
     path('preguntas2/', views.preguntas2, name='preguntas2'),
     path('construccion/', views.construccion, name='construccion'),
+    path('api/tutor/', views.tutor_view, name='tutor'),
     path('password_reset/', FinanceKidsPasswordResetView.as_view(
         template_name='core/password_reset.html',
         email_template_name='core/password_reset_email.html',

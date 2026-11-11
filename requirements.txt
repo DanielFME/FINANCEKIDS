@@ -17,3 +17,4 @@ dj-database-url==3.1.2
 whitenoise==6.9.0
 gunicorn==23.0.0
 psycopg2-binary==2.9.10
+openai
